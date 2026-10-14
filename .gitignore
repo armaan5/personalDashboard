@@ -1,0 +1,23 @@
+# Android / Gradle
+.gradle/
+build/
+/local.properties
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.keystore
+*.jks
+.idea/
+*.iml
+
+# OS / logs
+.DS_Store
+*.log
+
+# Claude / impeccable local state
+.claude/worktrees/
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
+.impeccable/
