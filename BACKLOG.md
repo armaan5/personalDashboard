@@ -86,7 +86,7 @@ Accept: `./gradlew :core:test` passes, with cases named by capability:
 Non-goals: no persistence, no Android, no calendar/steps rules (T6/T7 add their pure halves), no
 UI.
 
-### T2 — Room v1, repositories, AppContainer — *added 2026-10-22*
+### T2 — Room v1, repositories, AppContainer — *added 2026-10-22* — **DONE 2026-10-22** (HASH)
 Files: `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/schemas/` (generated),
 `app/…/data/Db.kt`, `app/…/data/HabitDao.kt`, `app/…/data/TodoDao.kt`, `app/…/data/Entities.kt`,
 `app/…/data/HabitRepository.kt`, `app/…/data/TodoRepository.kt`, `app/…/AppContainer.kt`,

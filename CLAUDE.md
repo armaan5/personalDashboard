@@ -115,7 +115,15 @@ Build pins (T0): AGP 9.4.1 (built-in Kotlin, no `kotlin-android` plugin), Gradle
 SHA-256 pinned), Kotlin 2.4.21, compileSdk/targetSdk 37, build-tools 37.0.0, Java 17 bytecode.
 Package / applicationId `dev.armaan.pd`; sources under `src/*/kotlin/dev/armaan/pd/` in both
 modules. `espresso-core` is pinned to 3.7.0 as a *constraint* only: compose ui-test pulls 3.5,
-which crashes on API 37 (`NoSuchMethodException: InputManager.getInstance`).
+which crashes on API 37 (`NoSuchMethodException: InputManager.getInstance`). Room 2.8.5 via
+KSP 2.3.12 (A3 names `room-ktx`, a Room 2 artifact; Room 3 is a separate `androidx.room3`
+package), schema JSON in `app/schemas/`. kotlinx-coroutines 1.11.0.
+
+**`connectedAndroidTest` can lie.** If the app process crashes before the runner starts (e.g. in
+`PdApplication.onCreate`), Gradle exits 0 with **zero tests** (seen in T2). Every instrumented
+Accept check also confirms the count:
+`grep -o 'tests="[0-9]*"' app/build/outputs/androidTest-results/connected/debug/*.xml` must be
+non-zero and include the named test class.
 
 ## Impeccable
 
