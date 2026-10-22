@@ -1,6 +1,7 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D22) planned 2026-10-22. Nothing done. Frontier: **T0**, **T3**.
+**Status:** Wave 1 (v1, D1–D22) in progress. T0 done 2026-10-22. Frontier: **T1**, **O1**; T3 (owner
+gate) deferred by the owner to after T2.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -22,7 +23,7 @@ after T0. T9 closes the wave on a real device.
 Dependencies: the `PRD.md` A3 allowlist only, with each library added by the first ticket that
 uses it. No others.
 
-### T0 — Gradle scaffold — *added 2026-10-22*
+### T0 — Gradle scaffold — *added 2026-10-22* — **DONE 2026-10-22** (dfa8c1e)
 Files: `settings.gradle.kts`, `build.gradle.kts`, `gradle/libs.versions.toml`, `gradle/wrapper/*`,
 `gradlew`, `core/build.gradle.kts`, `app/build.gradle.kts`, `app/src/main/AndroidManifest.xml`,
 `app/…/MainActivity.kt`, `app/…/ui/theme/Theme.kt`, `core/test/…/SmokeTest.kt`,

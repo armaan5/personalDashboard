@@ -2,9 +2,9 @@
 
 ## Status
 
-**v1 scoped, nothing built.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
-`SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved. Frontier: **T0** (scaffold) and
-**T3** (owner design gate). Implementation starts on the owner's "go". `.claude/` ported from
+**v1 in progress.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
+`SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold) done.
+Frontier: **T1** → T2, then **T3** (owner design gate, deferred by the owner to after T2). `.claude/` ported from
 Quickmate 2026-10-14. No `PRODUCT.md` (T3) or `DESIGN.md` (T9) yet.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
@@ -127,5 +127,4 @@ local state and gitignored.
 
 ## Still open
 
-- `applicationId` / package — forced choice at the start of T0.
 - Visual direction and final card order — T3 (owner gate).
