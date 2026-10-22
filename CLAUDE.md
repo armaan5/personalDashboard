@@ -2,11 +2,10 @@
 
 ## Status
 
-**Scoping. Nothing built.** Directory created 2026-10-14; `.claude/` (skills `feedback`, `to-tickets`,
-`tdd`, `impeccable`; the four impeccable agents; the impeccable hook) ported from Quickmate the
-same day, adapted for Android. No `SPEC.md`, `PRD.md`, `PRODUCT.md`, `DESIGN.md` or `BACKLOG.md`
-yet. First job: scope v1 into `PRD.md` (decisions D1…), then `SPEC.md`, then a BACKLOG wave.
-Scaffold (Gradle project) is gated on an explicit ask.
+**v1 scoped, nothing built.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
+`SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved. Frontier: **T0** (scaffold) and
+**T3** (owner design gate). Implementation starts on the owner's "go". `.claude/` ported from
+Quickmate 2026-10-14. No `PRODUCT.md` (T3) or `DESIGN.md` (T9) yet.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -18,8 +17,11 @@ Do not add dependencies beyond what the current backlog task or a decision row n
 
 ## What this is
 
-A personal dashboard app for Android. *What it shows, for whom, and from which sources is
-undecided — that is the first PRD.* Do not invent scope here; fill this section from the PRD.
+A personal Android dashboard for the owner and a few people, sideloaded. One screen, four cards
+in fixed order — **Calendar** (today + tomorrow, read-only), **Habits** (weekday-scheduled, streaks),
+**To-dos** (optional due date), **Steps** (Health Connect, daily goal) — plus one read-only Glance
+summary widget. On-device only: no `INTERNET` permission, no backup, no notifications. Detail:
+`SPEC.md`; why: `PRD.md`.
 
 ## Read first
 
@@ -27,11 +29,10 @@ The Quickmate document set, one job each. Create each when its first content exi
 
 - **`SPEC.md` — *what*.** Normative. Screens, data model, data sources, refresh/sync rules,
   every state and error. If it disagrees with `DECISIONS.md` on a detail, `SPEC.md` wins.
-  *Not yet written.*
 - **`DECISIONS.md` — *why*.** Locked requirements, the stack call, rejected options, the
   decisions log (`D<n>` entries, newest first). Read before proposing anything.
 - **`PRD.md` / `PRD-V<n>.md` — *what changes*.** Owner asks grilled to a decision table, scope
-  in/out, task map, SPEC patches required. *Not yet written.*
+  in/out, task map, SPEC patches required. `PRD.md` = v1 (D1–D22).
 - **`PLAN-V<n>.md` — *how a large wave gets built*.** Seams (file:line), stages, lanes, owner
   gates. Self-contained; a fresh session executes it top to bottom without re-deriving seams.
 - **`DESIGN.md` — *how it looks*.** Written by the impeccable documenter from the shipped UI,
@@ -42,7 +43,7 @@ The Quickmate document set, one job each. Create each when its first content exi
   `/feedback` digests open items into a D-entry or PRD, SPEC patches, and a BACKLOG wave, then
   stops for "go".
 - **`BACKLOG.md` — *in what order*.** Waves of tracer-bullet tickets (`/to-tickets` format):
-  Files, Blocked by, runnable Accept, Non-goals. *Not yet written.*
+  Files, Blocked by, runnable Accept, Non-goals.
 
 ## Workflow (ported from Quickmate)
 
@@ -65,8 +66,8 @@ Parallel work: worktree subagents on `model: "opus"`; main thread reviews and me
 
 ## Load-bearing constraints
 
-*Proposed 2026-10-14 at port time, carried over from Quickmate's architecture. Ratify or
-reverse in the first PRD.*
+*Ratified 2026-10-22 (D10). Enforced by module split: rules live in `:core` (Kotlin/JVM, cannot
+import `android.*`), plumbing in `:app` (PRD A2).*
 
 - **Logic lives in pure Kotlin, not in Android classes.** Every rule is a case in a pure
   reducer (`reduce(state, event, now) → state + effects`) or a pure function in a module with no
@@ -77,7 +78,10 @@ reverse in the first PRD.*
 - **Effects are returned, not performed.** The reducer never calls the network, the database,
   or the notification manager; plumbing executes what it returns.
 
-**Already evaluated and rejected on record — do not re-propose:** *(none yet)*
+**Already evaluated and rejected on record — do not re-propose:** see `DECISIONS.md` "Rejected"
+(weather/any network, Hilt, SQLDelight, plain MVVM, backup/export, widget actions, up-front
+permission onboarding, reminders in v1, non-midnight rollover, N-per-week habits, card reordering).
+Dependency allowlist: `PRD.md` A3.
 
 ## Dev environment
 
@@ -114,6 +118,5 @@ local state and gitignored.
 
 ## Still open
 
-Everything product-side: what the dashboard shows, data sources (on-device vs. APIs, auth),
-widgets vs. app, offline/refresh model, min SDK, distribution (sideload vs. Play). First
-`/feedback` or a scoping session turns these into D-rows.
+- `applicationId` / package — forced choice at the start of T0.
+- Visual direction and final card order — T3 (owner gate).
