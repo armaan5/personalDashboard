@@ -14,7 +14,7 @@ home-screen widget summarises them (D19). All data comes from the phone itself (
 
 ## 2. Platform
 
-- **minSdk 28**, compileSdk/targetSdk pinned in T0 (≥ 36, PRD A5). Kotlin, Jetpack Compose,
+- **minSdk 28**, compileSdk/targetSdk **37** (pinned in T0, PRD A5; *amended 2026-10-22*). Kotlin, Jetpack Compose,
   Gradle Kotlin DSL, version catalog `gradle/libs.versions.toml`.
 - **Modules** (PRD A2):
   - `:core`: Kotlin/JVM. Domain types, the reducer, and every rule in §4, plus the pure halves
@@ -25,7 +25,9 @@ home-screen widget summarises them (D19). All data comes from the phone itself (
   - Permissions: `READ_CALENDAR` and `android.permission.health.READ_STEPS`. **No
     `INTERNET`**, no `POST_NOTIFICATIONS`, no `WRITE_CALENDAR`, no alarm permissions (D3, D20,
     D21).
-  - `android:allowBackup="false"` (D9).
+  - `android:allowBackup="false"` (D9), plus `dataExtractionRules` and `fullBackupContent` that
+    exclude every domain. On API 31+ `allowBackup="false"` alone doesn't stop device-to-device
+    transfer (*clarified 2026-10-22*, T0).
   - A `<queries>` entry for the Health Connect package (needed on 28–33).
 - **Time:** one `Clock` is created in `AppContainer`. Everything else receives it or an `Instant` /
   `ZoneId`. `ZoneId.systemDefault()` is read at the same wiring place, and re-read on

@@ -10,8 +10,10 @@ repo: where the seams are, what counts as an independent expected value, what th
 and what is banned.
 
 Adapted from `mattpocock/skills` → `engineering/tdd` via Quickmate (ported 2026-10-14).
-Project specifics override the original. **The seam table below is provisional** until the
-scaffold ticket lands; that ticket replaces the placeholder paths with real ones.
+Project specifics override the original. Paths (fixed by T0, 2026-10-22): `:core` →
+`core/src/{main,test}/kotlin/dev/armaan/pd/`; `:app` → `app/src/{main,test,androidTest}/kotlin/dev/armaan/pd/`.
+Compose tests use `androidx.compose.ui.test.junit4.v2.createAndroidComposeRule` (the v1 rule is
+deprecated; v2 runs on `StandardTestDispatcher`).
 
 ## Read first
 

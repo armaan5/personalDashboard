@@ -103,10 +103,19 @@ Set up 2026-10-22 (Apple Silicon, macOS 26.3):
 - No global `gradle` — always use the wrapper `./gradlew` once the scaffold exists.
 - `git` 2.39, `gh` present (from Quickmate).
 
-Expected Gradle tasks once scaffolded (confirm in the scaffold ticket, then fix this list):
-`./gradlew assembleDebug`, `./gradlew test` (JVM unit tests), `./gradlew lint`,
-`./gradlew connectedAndroidTest` (instrumented, needs device/emulator). Full verification chain
+Gradle tasks (confirmed T0, 2026-10-22): `./gradlew test` (`:core:test` + `:app:testDebugUnitTest`),
+`./gradlew lint` (`:app:lint`), `./gradlew assembleDebug`, `./gradlew assembleRelease`,
+`./gradlew connectedAndroidTest` (instrumented, needs `pd_api37` booted). Full verification chain
 for a wave's last code ticket: `test` · `lint` · `assembleDebug` · `connectedAndroidTest`.
+Run inline: `export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+ANDROID_HOME="$HOME/Library/Android/sdk"` then `./gradlew …`. A cold `~/.gradle` cache took
+~20 min for the first build; warm builds ~1 min.
+
+Build pins (T0): AGP 9.4.1 (built-in Kotlin, no `kotlin-android` plugin), Gradle 9.8.2 (wrapper,
+SHA-256 pinned), Kotlin 2.4.21, compileSdk/targetSdk 37, build-tools 37.0.0, Java 17 bytecode.
+Package / applicationId `dev.armaan.pd`; sources under `src/*/kotlin/dev/armaan/pd/` in both
+modules. `espresso-core` is pinned to 3.7.0 as a *constraint* only: compose ui-test pulls 3.5,
+which crashes on API 37 (`NoSuchMethodException: InputManager.getInstance`).
 
 ## Impeccable
 

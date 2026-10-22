@@ -152,7 +152,7 @@ Accept:
   - Delete → Undo restores it with its streak.
   - System Back from Habits returns to Dashboard.
   - Every card and control has a content description.
-- `grep -rn '"[A-Z][a-z]' app/src/main/java --include=*.kt | grep -v 'R.string\|Preview\|Log\.'`
+- `grep -rn '"[A-Z][a-z]' app/src/main/kotlin --include=*.kt | grep -v 'R.string\|Preview\|Log\.'`
   finds no hard-coded UI copy.
 
 Non-goals: no habit reordering, no editing past days, no to-do/calendar/steps content, no
