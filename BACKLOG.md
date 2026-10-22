@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D22) in progress. T0 done 2026-10-22. Frontier: **T1**, **O1**; T3 (owner
+**Status:** Wave 1 (v1, D1–D22) in progress. T0, T1 done 2026-10-22. Frontier: **T2**, **O1**; T3 (owner
 gate) deferred by the owner to after T2.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
@@ -51,7 +51,7 @@ Accept: with `JAVA_HOME` set per `CLAUDE.md`:
 Non-goals: no Room, DataStore, Glance, WorkManager or Health Connect yet (each comes with its
 ticket). No real theme (T3/T4). No release signing (O1). No CI.
 
-### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (HASH)
+### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (35ba61a)
 Files: `core/…/time/Day.kt`, `core/…/habit/Habit.kt`, `core/…/habit/Streak.kt`,
 `core/…/todo/Todo.kt`, `core/…/todo/Buckets.kt`, `core/…/app/State.kt`, `core/…/app/Event.kt`,
 `core/…/app/Effect.kt`, `core/…/app/Reduce.kt`, `core/test/…/time/DayTest.kt`,
