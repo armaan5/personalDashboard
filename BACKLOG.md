@@ -51,7 +51,7 @@ Accept: with `JAVA_HOME` set per `CLAUDE.md`:
 Non-goals: no Room, DataStore, Glance, WorkManager or Health Connect yet (each comes with its
 ticket). No real theme (T3/T4). No release signing (O1). No CI.
 
-### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22*
+### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (HASH)
 Files: `core/…/time/Day.kt`, `core/…/habit/Habit.kt`, `core/…/habit/Streak.kt`,
 `core/…/todo/Todo.kt`, `core/…/todo/Buckets.kt`, `core/…/app/State.kt`, `core/…/app/Event.kt`,
 `core/…/app/Effect.kt`, `core/…/app/Reduce.kt`, `core/test/…/time/DayTest.kt`,

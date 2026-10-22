@@ -1,0 +1,127 @@
+package dev.armaan.pd.app
+
+import dev.armaan.pd.habit.Habit
+import dev.armaan.pd.habit.cleanHabitName
+import dev.armaan.pd.habit.isScheduledOn
+import dev.armaan.pd.time.today
+import dev.armaan.pd.todo.Todo
+import dev.armaan.pd.todo.buckets
+import dev.armaan.pd.todo.cleanTodoTitle
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+
+data class Next(val state: State, val effects: List<Effect> = emptyList())
+
+/** SPEC §4.4. Pure: no I/O, time and zone are arguments. */
+fun reduce(state: State, event: Event, now: Instant, zone: ZoneId): Next {
+    val today = today(now, zone)
+    return when (event) {
+        is Event.Open -> when {
+            event.screen == Screen.Dashboard -> Next(state.copy(backStack = listOf(Screen.Dashboard)))
+            state.screen == event.screen -> Next(state)
+            else -> Next(state.copy(backStack = state.backStack + event.screen))
+        }
+
+        Event.Back ->
+            if (state.backStack.size > 1) Next(state.copy(backStack = state.backStack.dropLast(1)))
+            else Next(state, listOf(Effect.Finish))
+
+        is Event.HabitsLoaded -> Next(state.copy(habits = event.habits, completions = event.completions))
+        is Event.TodosLoaded -> Next(state.copy(todos = event.todos))
+
+        is Event.SaveHabit -> saveHabit(state, event, today)
+        is Event.ToggleHabit -> toggleHabit(state, event, today)
+        is Event.DeleteHabit -> deleteHabit(state, event)
+
+        is Event.SaveTodo -> saveTodo(state, event, now)
+        is Event.ToggleTodo -> toggleTodo(state, event, today)
+        Event.ClearHistory -> clearHistory(state, today)
+
+        Event.Undo -> undo(state)
+        Event.SnackbarDismissed -> Next(state.copy(pendingUndo = null))
+    }
+}
+
+private fun saveHabit(state: State, event: Event.SaveHabit, today: LocalDate): Next {
+    val name = cleanHabitName(event.name) ?: return Next(state)
+    if (event.weekdays.isEmpty()) return Next(state)
+    val habit = if (event.id == 0L) {
+        val last = state.habits.maxOfOrNull { it.sortOrder } ?: -1
+        Habit(0, name, event.weekdays, createdOn = today, sortOrder = last + 1)
+    } else {
+        state.habit(event.id)?.copy(name = name, weekdays = event.weekdays) ?: return Next(state)
+    }
+    return Next(state, listOf(Effect.WriteHabit(habit)))
+}
+
+/** PRD A7: only today, and only when scheduled today. */
+private fun toggleHabit(state: State, event: Event.ToggleHabit, today: LocalDate): Next {
+    val habit = state.habit(event.habitId) ?: return Next(state)
+    if (event.date != today || !habit.isScheduledOn(today)) return Next(state)
+    val done = today !in state.completions[habit.id].orEmpty()
+    return Next(state, listOf(Effect.ToggleCompletion(habit.id, today, done)))
+}
+
+private fun deleteHabit(state: State, event: Event.DeleteHabit): Next {
+    val habit = state.habit(event.habitId) ?: return Next(state)
+    val completions = state.completions[habit.id].orEmpty()
+    return Next(
+        state.copy(pendingUndo = Undo.HabitDeleted(habit, completions)),
+        listOf(Effect.DeleteHabit(habit.id), Effect.ShowSnackbar(Message.HabitDeleted(habit.name), undo = true)),
+    )
+}
+
+private fun saveTodo(state: State, event: Event.SaveTodo, now: Instant): Next {
+    val title = cleanTodoTitle(event.title) ?: return Next(state)
+    val todo = if (event.id == 0L) {
+        Todo(0, title, event.dueDate, createdAt = now, completedOn = null)
+    } else {
+        state.todo(event.id)?.copy(title = title, dueDate = event.dueDate) ?: return Next(state)
+    }
+    return Next(state, listOf(Effect.WriteTodo(todo)))
+}
+
+/** PRD A8: open → done today with Undo; done today → open; history is read-only. */
+private fun toggleTodo(state: State, event: Event.ToggleTodo, today: LocalDate): Next {
+    val todo = state.todo(event.todoId) ?: return Next(state)
+    val completedOn = todo.completedOn
+    return when {
+        completedOn == null -> Next(
+            state.copy(pendingUndo = Undo.TodoTicked(todo.id)),
+            listOf(
+                Effect.WriteTodo(todo.copy(completedOn = today)),
+                Effect.ShowSnackbar(Message.TodoDone(todo.title), undo = true),
+            ),
+        )
+        completedOn >= today -> Next(state, listOf(Effect.WriteTodo(todo.copy(completedOn = null))))
+        else -> Next(state)
+    }
+}
+
+private fun clearHistory(state: State, today: LocalDate): Next {
+    val history = buckets(state.todos, today).history
+    if (history.isEmpty()) return Next(state)
+    return Next(
+        state.copy(pendingUndo = Undo.HistoryCleared(history)),
+        listOf(
+            Effect.DeleteTodos(history.map { it.id }),
+            Effect.ShowSnackbar(Message.HistoryCleared(history.size), undo = true),
+        ),
+    )
+}
+
+private fun undo(state: State): Next {
+    val effects = when (val pending = state.pendingUndo) {
+        null -> return Next(state)
+        is Undo.HabitDeleted -> listOf(Effect.RestoreHabit(pending.habit, pending.completions))
+        // Reopen the current row, so an edit made while the snackbar was up survives.
+        is Undo.TodoTicked -> listOfNotNull(state.todo(pending.todoId)?.let { Effect.WriteTodo(it.copy(completedOn = null)) })
+        is Undo.HistoryCleared -> pending.todos.map { Effect.WriteTodo(it) }
+    }
+    return Next(state.copy(pendingUndo = null), effects)
+}
+
+private fun State.habit(id: Long): Habit? = habits.find { it.id == id }
+
+private fun State.todo(id: Long): Todo? = todos.find { it.id == id }

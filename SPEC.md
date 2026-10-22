@@ -91,7 +91,8 @@ state recomputation uses the new zone. Stored dates are not rewritten.
   - `today`: open, `due_date == today`.
   - `undated`: open, no `due_date`.
   - `upcoming`: open, `due_date > today`.
-  - `doneToday`: `completed_on == today`.
+  - `doneToday`: `completed_on == today` (or later, after a westward zone change; *clarified
+    2026-10-22*, T1).
   - `history`: `completed_on < today`.
 - **Dashboard card:** `overdue` (oldest due first), then `today`, then `undated` (oldest
   `created_at` first), then `doneToday` struck through. `upcoming` and `history` are not on the
@@ -107,9 +108,19 @@ state recomputation uses the new zone. Stored dates are not rewritten.
 `reduce(state, event, now, zone) → (state, effects)`. State holds the screen back stack (PRD A4:
 `[Dashboard]` at the root; Habits, To-dos and Settings are pushed; Back pops; Back at the root
 finishes), the current domain snapshot, the permission/source states from §5, and pending undo.
-Effects are data: `WriteHabit`, `DeleteHabit`, `ToggleCompletion`, `WriteTodo`, `DeleteTodos`,
+Effects are data: `WriteHabit`, `DeleteHabit`, `RestoreHabit(habit, completions)`,
+`ToggleCompletion(habit, date, done)`, `WriteTodo` (upsert by id), `DeleteTodos`,
 `RequestPermission(kind)`, `OpenAppSettings`, `OpenHealthConnectInstall`, `RefreshWidget`,
-`ShowSnackbar(message, undo)`, `Finish`. Plumbing executes them. The reducer performs no I/O.
+`ShowSnackbar(message, undo)`, `Finish`. Plumbing executes them, in list order. The reducer performs
+no I/O.
+
+*Amended 2026-10-22 (T1):* the domain snapshot is whatever the repositories last delivered
+(`HabitsLoaded`, `TodosLoaded`); the reducer never edits it optimistically. Pending undo holds only
+the latest undoable action (habit delete, to-do tick, Clear history) and is cleared when the
+snackbar is dismissed. Undo of a to-do tick reopens the current row, keeping any edit made
+meanwhile. Opening Dashboard resets the back stack to `[Dashboard]`. `ToggleCompletion` carries the target `done` value rather than flipping, so
+replaying it is harmless. `RestoreHabit` re-inserts a deleted habit with its old id and
+completions. `RequestPermission` … `RefreshWidget` arrive with T6–T8.
 
 ## 5. Sources
 
