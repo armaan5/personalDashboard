@@ -3,8 +3,8 @@
 ## Status
 
 **v1 in progress.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
-`SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules) done.
-Frontier: **T2**, then **T3** (owner design gate, deferred by the owner to after T2). `.claude/` ported from
+`SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
+Frontier: **T3** (owner design gate, blocks T4) and **O1** (release signing, needs the owner's keystore). `.claude/` ported from
 Quickmate 2026-10-14. No `PRODUCT.md` (T3) or `DESIGN.md` (T9) yet.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory

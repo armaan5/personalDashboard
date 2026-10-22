@@ -1,7 +1,7 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D22) in progress. T0, T1 done 2026-10-22. Frontier: **T2**, **O1**; T3 (owner
-gate) deferred by the owner to after T2.
+**Status:** Wave 1 (v1, D1–D22) in progress. T0, T1, T2 done 2026-10-22. Frontier: **T3** (owner gate, blocks T4) and
+**O1**.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -86,7 +86,7 @@ Accept: `./gradlew :core:test` passes, with cases named by capability:
 Non-goals: no persistence, no Android, no calendar/steps rules (T6/T7 add their pure halves), no
 UI.
 
-### T2 — Room v1, repositories, AppContainer — *added 2026-10-22* — **DONE 2026-10-22** (HASH)
+### T2 — Room v1, repositories, AppContainer — *added 2026-10-22* — **DONE 2026-10-22** (5c8fdcf)
 Files: `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/schemas/` (generated),
 `app/…/data/Db.kt`, `app/…/data/HabitDao.kt`, `app/…/data/TodoDao.kt`, `app/…/data/Entities.kt`,
 `app/…/data/HabitRepository.kt`, `app/…/data/TodoRepository.kt`, `app/…/AppContainer.kt`,
