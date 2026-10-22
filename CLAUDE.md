@@ -81,13 +81,21 @@ reverse in the first PRD.*
 
 ## Dev environment
 
-Checked 2026-10-14:
+Set up 2026-10-22 (Apple Silicon, macOS 26.3):
 
-- **Android Studio installed** (`/Applications/Android Studio.app`). Its bundled JDK 21 is the
-  only Java on the machine — no system JRE. For CLI Gradle:
-  `export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"`.
-- **Android SDK not installed yet** (`~/Library/Android/sdk` absent, `ANDROID_HOME` unset). Run
-  Studio's first-run SDK setup before the scaffold ticket. No `adb`, no emulator image yet.
+- **Android Studio 2025.2** (`/Applications/Android Studio.app`). Its bundled JDK 21 is the
+  only Java on the machine — no system JRE.
+- **Android SDK** at `~/Library/Android/sdk`, installed headless via `cmdline-tools/latest`
+  (21.0): `platform-tools` (adb 37.0.1), `emulator` (37.2), `build-tools;37.0.0`,
+  `platforms;android-36`, `platforms;android-37.0`,
+  `system-images;android-37.0;google_apis_playstore;arm64-v8a`. Licences accepted.
+- **`~/.zshrc`** exports `JAVA_HOME` (Studio JBR), `ANDROID_HOME`, and puts `platform-tools`,
+  `emulator`, `cmdline-tools/latest/bin` on `PATH`. Non-interactive shells (Claude's Bash) don't
+  read it — run via `zsh -ic '…'` or export inline.
+- **AVD `pd_api37`** (Pixel 8, API 37, Play image). Boot-tested headless:
+  `emulator -avd pd_api37 -no-window -no-audio` → `adb wait-for-device`.
+- Harmless noise: `sdkmanager`/`avdmanager` print `line 173: test: : integer expression expected`.
+- compileSdk/minSdk not chosen — that's a PRD decision; both 36 and 37 platforms are present.
 - No global `gradle` — always use the wrapper `./gradlew` once the scaffold exists.
 - `git` 2.39, `gh` present (from Quickmate).
 
