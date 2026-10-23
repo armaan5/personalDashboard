@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D23) in progress. T0–T5 done 2026-10-22. Frontier: **T6**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
+**Status:** Wave 1 (v1, D1–D23) in progress. T0–T6 done 2026-10-22. Frontier: **T7**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -179,7 +179,7 @@ Accept:
 
 Non-goals: no due times, no reminders (D20), no unticking from history, no search or tags.
 
-### T6 — Calendar card and Settings — **high-care** — *added 2026-10-22*
+### T6 — Calendar card and Settings — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (5248381)
 Files: `core/…/calendar/Agenda.kt`, `core/test/…/calendar/AgendaTest.kt`, `core/…/app/*`,
 `app/…/source/CalendarReader.kt`, `app/…/data/Settings.kt`,
 `app/…/ui/dashboard/CalendarCard.kt`, `app/…/ui/settings/SettingsScreen.kt`,

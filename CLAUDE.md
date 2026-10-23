@@ -6,7 +6,7 @@
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
 T4 done: theme, dashboard shell, Habits. O1 code merged (2c16afe); its Accept waits on the owner creating the release
-keystore (see Release). T5 done (fdde0b9): To-dos card, screen, sheet. Frontier: **T6** (Calendar + Settings). `.claude/` ported from Quickmate 2026-10-14. No `DESIGN.md` (T9) yet.
+keystore (see Release). T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). Frontier: **T7** (Steps + Health Connect). `.claude/` ported from Quickmate 2026-10-14. No `DESIGN.md` (T9) yet.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
