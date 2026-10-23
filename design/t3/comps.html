@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Planner comps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* T3 comps: "The Wall Planner". 1 CSS px = 1 dp. Example content is synthetic. */
+:root {
+  --sheet: #DCE3E6;
+  --sheet-ink: #14324F;
+}
+.light {
+  --stock: #F7F9F8;
+  --ink: #14324F;
+  --ink-2: #546A7E;          /* ink 72 % over stock, 5.3:1 */
+  --rule: rgba(20,50,79,.16); /* hairline grid, ink 16 % */
+  --tint: rgba(20,50,79,.07); /* planner weekend shade, ink 7 % */
+  --track: rgba(20,50,79,.10);
+  --on-ink: #F7F9F8;
+  --cal: #2A6DB8;  --cal-wash: rgba(42,109,184,.14);
+  --hab: #3E9C55;
+  --todo: #E8B92F;
+  --step: #E0573E;
+  --scrim: rgba(20,50,79,.32);
+}
+.dark {
+  --stock: #0E1C2B;
+  --ink: #E6EEF2;
+  --ink-2: #A9B3BA;
+  --rule: rgba(230,238,242,.16);
+  --tint: rgba(230,238,242,.07);
+  --track: rgba(230,238,242,.12);
+  --on-ink: #0E1C2B;
+  --cal: #6AA5EC;  --cal-wash: rgba(106,165,236,.18);
+  --hab: #5DBB72;
+  --todo: #F0C94A;
+  --step: #F07A5F;
+  --scrim: rgba(0,0,0,.5);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--sheet);
+  color: var(--sheet-ink);
+  font-family: Barlow, system-ui, sans-serif;
+  padding: 40px 32px 80px;
+}
+::selection { background: rgba(42,109,184,.25); }
+.sheet-head { max-width: 1400px; margin: 0 auto 32px; }
+.sheet-head h1 { font: 700 40px/1 "Barlow Condensed"; letter-spacing: .01em; }
+.sheet-head p { font-size: 15px; margin-top: 8px; max-width: 70ch; line-height: 1.45; }
+.band { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; margin: 0 auto 56px; max-width: 2400px; }
+.band > h2 { width: 100%; font: 600 22px/1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .06em; text-align: center; }
+figure { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+figcaption { font: 600 15px/1.2 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .05em; }
+
+/* phone frame */
+.phone {
+  width: 412px; height: 915px; position: relative; overflow: hidden;
+  background: var(--stock); color: var(--ink);
+  border-radius: 28px; box-shadow: 0 2px 4px rgba(20,50,79,.12), 0 18px 40px rgba(20,50,79,.18);
+  font-family: Barlow, sans-serif; font-variant-numeric: tabular-nums;
+}
+.phone.tall { height: auto; min-height: 915px; padding-bottom: 32px; }
+.fold { position: absolute; left: 0; right: 0; top: 915px; border-top: 1px dashed var(--step); }
+.fold span { position: absolute; right: 8px; top: -18px; font: 600 11px "Barlow Condensed"; color: var(--step); text-transform: uppercase; letter-spacing: .06em; }
+.status { height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 500 14px Barlow; }
+.status i { display: inline-block; width: 16px; height: 10px; border: 1.5px solid currentColor; border-radius: 2px; margin-left: 6px; position: relative; }
+.status i::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: currentColor; }
+svg.ic { width: 24px; height: 24px; fill: currentColor; display: block; }
+.iconbtn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 4px; color: var(--ink); }
+
+/* masthead */
+.mast { padding: 8px 16px 14px; display: flex; align-items: flex-end; justify-content: space-between; }
+.mast .day { font: 500 20px/1 "Barlow Condensed"; color: var(--ink-2); letter-spacing: .02em; }
+.mast .date { font: 700 46px/.95 "Barlow Condensed"; letter-spacing: -.005em; margin-top: 4px; }
+.mast .right { display: flex; align-items: center; gap: 4px; margin-bottom: -6px; }
+.wk { font: 600 15px/1 "Barlow Condensed"; letter-spacing: .04em; border: 1px solid var(--ink); padding: 5px 7px 4px; border-radius: 3px; }
+
+/* ruled section */
+.sec { border-top: 2px solid var(--ink); margin: 0 16px; }
+.sec + .sec { margin-top: 20px; }
+.sec-head { min-height: 48px; display: flex; align-items: center; gap: 10px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.sec-head h3 { font: 600 19px/1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .06em; flex: 1; }
+.sec-head .meta { font: 600 15px/1 "Barlow Condensed"; color: var(--ink-2); letter-spacing: .02em; display: flex; align-items: center; gap: 2px; }
+.sec-head .meta b { font: 700 28px/1 "Barlow Condensed"; color: var(--ink); letter-spacing: 0; margin-right: 4px; }
+.sub { font: 600 14px/1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); padding: 16px 0 8px; }
+
+/* calendar */
+.allday { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.allday div { background: var(--cal-wash); border-radius: 4px; padding: 7px 10px; font: 500 15px/1.25 Barlow; display: flex; justify-content: space-between; }
+.allday div span { font: 600 13px "Barlow Condensed"; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
+.next { padding: 12px 0 14px; border-bottom: 1px solid var(--rule); }
+.next .row1 { display: flex; align-items: baseline; gap: 12px; }
+.next .t { font: 700 38px/1 "Barlow Condensed"; }
+.next .end { font: 500 17px/1 "Barlow Condensed"; color: var(--ink-2); }
+.now { font: 700 13px/1 "Barlow Condensed"; letter-spacing: .08em; text-transform: uppercase; background: var(--cal); color: var(--on-ink); padding: 4px 6px 3px; border-radius: 3px; align-self: center; }
+.dark .now { color: #0E1C2B; }
+.next .title { font: 500 20px/1.25 Barlow; margin-top: 6px; }
+.dur { height: 3px; background: var(--cal); border-radius: 2px; margin-top: 10px; position: relative; }
+.dur.prog::before { content: ""; position: absolute; left: 0; top: -3px; width: 2px; height: 9px; background: var(--ink); }
+.ev { display: grid; grid-template-columns: 52px 1fr; gap: 0 10px; padding: 10px 0 11px; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.ev .t { font: 600 19px/1 "Barlow Condensed"; }
+.ev .title { font: 400 16px/1.3 Barlow; }
+.ev .dur { grid-column: 2; height: 2px; margin-top: 7px; }
+.ev:last-child { border-bottom: 0; }
+
+/* habits */
+.days { display: grid; grid-template-columns: 48px 1fr 56px; gap: 0 12px; padding-bottom: 2px; }
+.days .letters, .chain { display: flex; gap: 6px; }
+.days .letters span { width: 14px; text-align: center; font: 600 12px/1 "Barlow Condensed"; color: var(--ink-2); }
+.days .letters span.today { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.habit { display: grid; grid-template-columns: 48px 1fr auto; gap: 0 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); min-height: 68px; }
+.habit:last-child { border-bottom: 0; }
+.tick { width: 48px; height: 48px; display: grid; place-items: center; }
+.tick i { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--ink-2); display: grid; place-items: center; }
+.tick.on i { background: var(--hab); border-color: var(--hab); color: var(--on-ink); transform: rotate(-3deg); }
+.dark .tick.on i { color: #0E1C2B; }
+.tick.on i svg { width: 22px; height: 22px; }
+.hname { font: 500 17px/1.25 Barlow; }
+.chain { margin-top: 7px; }
+.c { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.c.done { background: var(--hab); }
+.c.miss { border: 1.5px solid var(--ink-2); }
+.c.off { border-radius: 2px; background: var(--tint); }
+.c.now { border: 1.5px solid var(--ink); box-shadow: 0 0 0 2px var(--stock), 0 0 0 3.5px var(--ink); width: 12px; height: 12px; margin: 1px; }
+.c.fut { border: 1.5px dotted var(--ink-2); opacity: .7; }
+.streak { text-align: right; min-width: 56px; }
+.streak b { display: block; font: 700 30px/1 "Barlow Condensed"; }
+.streak span { font: 500 12px/1 "Barlow Condensed"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.hsched { font: 500 13px/1.2 "Barlow Condensed"; letter-spacing: .03em; color: var(--ink-2); margin-top: 3px; }
+.habit.off .hname { color: var(--ink-2); }
+
+/* to-dos */
+.todo { display: grid; grid-template-columns: 48px 1fr auto; gap: 0 8px; align-items: center; min-height: 52px; border-bottom: 1px solid var(--rule); }
+.todo:last-child { border-bottom: 0; }
+.box { width: 48px; height: 48px; display: grid; place-items: center; }
+.box i { width: 24px; height: 24px; border: 2px solid var(--ink-2); border-radius: 4px; display: grid; place-items: center; }
+.box.on i { background: var(--todo); border-color: var(--todo); color: #14324F; transform: rotate(-3deg); }
+.box.on i svg { width: 18px; height: 18px; }
+.ttl { font: 400 16px/1.3 Barlow; }
+.todo.done .ttl { text-decoration: line-through; text-decoration-thickness: 1.5px; color: var(--ink-2); }
+.due { font: 600 14px/1 "Barlow Condensed"; letter-spacing: .03em; color: var(--ink-2); padding-right: 2px; }
+.due.over { color: var(--ink); text-transform: uppercase; letter-spacing: .07em; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+.due.over::before { content: ""; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid var(--todo); }
+
+/* steps */
+.steps-top { display: flex; align-items: center; gap: 20px; padding: 6px 0 16px; }
+.ring { width: 112px; height: 112px; flex: none; }
+.ring circle { fill: none; stroke-width: 12; }
+.ring .trk { stroke: var(--track); }
+.ring .val { stroke: var(--step); stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 56px 56px; }
+.big { font: 700 48px/1 "Barlow Condensed"; }
+.of { font: 500 17px/1.2 "Barlow Condensed"; color: var(--ink-2); letter-spacing: .02em; margin-top: 4px; }
+.togo { font: 400 15px/1.3 Barlow; margin-top: 8px; }
+.bars { position: relative; height: 92px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; justify-items: center; align-items: end; border-bottom: 1px solid var(--ink); }
+.bars .goal { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--ink-2); }
+.bars .goal span { position: absolute; right: 0; top: -15px; font: 600 11px "Barlow Condensed"; color: var(--ink-2); letter-spacing: .05em; }
+.bar { width: 24px; background: var(--track); border-radius: 2px 2px 0 0; }
+.bar.met { background: var(--step); }
+.bar.today { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.blabels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding-top: 6px; }
+.blabels span { text-align: center; font: 600 12px "Barlow Condensed"; color: var(--ink-2); }
+.blabels span.today { color: var(--ink); }
+
+/* blocked / empty states */
+.blocked { padding: 4px 0 18px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.blocked p { font: 400 16px/1.4 Barlow; max-width: 34ch; }
+.btn { height: 48px; padding: 0 22px; border-radius: 4px; background: var(--ink); color: var(--on-ink); font: 600 16px/48px Barlow; letter-spacing: .01em; display: inline-flex; align-items: center; gap: 8px; }
+.btn.text { background: none; color: var(--ink); padding: 0 12px; margin-left: -12px; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.btn svg { width: 20px; height: 20px; }
+
+/* app bar + fab + sheet + snackbar */
+.appbar { height: 64px; display: flex; align-items: center; gap: 4px; padding: 0 4px; }
+.appbar h1 { font: 700 30px/1 "Barlow Condensed"; flex: 1; letter-spacing: .005em; }
+.fab { position: absolute; right: 16px; bottom: 32px; height: 56px; padding: 0 20px 0 16px; border-radius: 8px; background: var(--ink); color: var(--on-ink); display: flex; align-items: center; gap: 10px; font: 600 16px Barlow; box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 4px 10px rgba(0,0,0,.14); }
+.snack { position: absolute; left: 16px; right: 16px; bottom: 104px; min-height: 52px; border-radius: 4px; background: var(--ink); color: var(--on-ink); display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; font: 400 15px Barlow; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.snack b { font: 600 15px Barlow; padding: 14px 12px; text-decoration: underline; text-underline-offset: 3px; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--stock); border-radius: 12px 12px 0 0; padding: 10px 16px 28px; border-top: 2px solid var(--ink); }
+.grab { width: 32px; height: 4px; border-radius: 2px; background: var(--ink-2); margin: 0 auto 14px; opacity: .6; }
+.sheet h2 { font: 700 26px/1 "Barlow Condensed"; margin-bottom: 18px; }
+.field { border: 1.5px solid var(--ink); border-radius: 4px; padding: 8px 12px 10px; position: relative; }
+.field label { font: 600 12px/1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); }
+.field div { font: 400 17px/1.3 Barlow; margin-top: 4px; }
+.field div::after { content: ""; display: inline-block; width: 2px; height: 20px; background: var(--cal); vertical-align: -4px; margin-left: 1px; }
+.helper { font: 400 13px Barlow; color: var(--ink-2); margin: 6px 2px 18px; display: flex; justify-content: space-between; }
+.label2 { font: 600 14px/1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); margin-bottom: 10px; }
+.chips { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 26px; }
+.chip { height: 48px; border-radius: 4px; border: 1.5px solid var(--ink-2); display: grid; place-items: center; font: 600 17px "Barlow Condensed"; }
+.chip.on { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+.actions { display: flex; justify-content: space-between; align-items: center; }
+
+/* widget */
+.home { background: #3B5B6B; }
+.dark.home { background: #101418; }
+.home .wall { position: absolute; inset: 0; background:
+  radial-gradient(120% 70% at 20% 10%, #6E8F8A 0%, transparent 60%),
+  radial-gradient(90% 60% at 90% 90%, #24414F 0%, transparent 70%), #3B5B6B; }
+.dark.home .wall { background:
+  radial-gradient(120% 70% at 20% 10%, #24323A 0%, transparent 60%),
+  radial-gradient(90% 60% at 90% 90%, #0A1015 0%, transparent 70%), #12181D; }
+.home .status { color: #fff; position: relative; }
+.widget { position: absolute; left: 24px; top: 96px; width: 172px; height: 172px; border-radius: 22px; background: var(--stock); color: var(--ink); padding: 12px 12px 10px 14px; display: flex; flex-direction: column; }
+.widget .wd { font: 700 19px/1 "Barlow Condensed"; display: flex; justify-content: space-between; padding-bottom: 7px; border-bottom: 2px solid var(--ink); }
+.widget .wd span { font: 500 15px "Barlow Condensed"; color: var(--ink-2); }
+.wl { display: grid; grid-template-columns: 8px 1fr; gap: 0 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--rule); flex: 1; }
+.wl:last-child { border-bottom: 0; }
+.wl .dot { width: 8px; height: 8px; }
+.wl .v { font: 700 18px/1.05 "Barlow Condensed"; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl .v small { font: 500 15px "Barlow Condensed"; color: var(--ink-2); }
+.wl .s { grid-column: 2; font: 400 12px/1.2 Barlow; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.widget.w2 { top: 300px; }
+.apps { position: absolute; left: 24px; right: 24px; bottom: 120px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 0; justify-items: center; }
+.apps i { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.22); display: block; }
+.dock { position: absolute; left: 24px; right: 24px; bottom: 36px; height: 56px; border-radius: 28px; background: rgba(255,255,255,.18); }
+.wcap { position: absolute; left: 212px; font: 500 13px/1.35 Barlow; color: rgba(255,255,255,.85); width: 176px; }
+.notes { max-width: 1400px; margin: 0 auto; columns: 2 420px; gap: 48px; font-size: 15px; line-height: 1.5; }
+.notes h3 { font: 600 20px/1.1 "Barlow Condensed"; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 6px; break-after: avoid; }
+.notes section { break-inside: avoid; margin-bottom: 22px; }
+.notes code { font-family: ui-monospace, monospace; font-size: 13px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 4px; border: 1px solid rgba(0,0,0,.15); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+    <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></symbol>
+    <symbol id="i-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></symbol>
+  </defs>
+</svg>
+
+<header class="sheet-head">
+  <h1>The Wall Planner — T3 comps</h1>
+  <p>Dashboard, Habits screen, add/edit sheet and the 2×2 widget, light and dark, at Pixel 8 width (412&nbsp;dp, 1&nbsp;px&nbsp;=&nbsp;1&nbsp;dp). Thursday 22 October, 10:40. All names, events and counts are example content. The dashed line marks the first-viewport fold.</p>
+</header>
+
+<!-- ===================================================== -->
+<template id="dash">
+  <div class="phone tall">
+    <div class="status"><span>10:40</span><span>5G<i></i></span></div>
+    <div class="mast">
+      <div><div class="day">Thursday</div><div class="date">22 October</div></div>
+      <div class="right"><span class="wk">WK 43</span><span class="iconbtn" aria-label="Settings"><svg class="ic"><use href="#i-settings"/></svg></span></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--cal)"></span><h3>Calendar</h3><span class="meta"><svg class="ic"><use href="#i-chev"/></svg></span></div>
+      <div class="allday"><div>Recycling collection <span>All day</span></div></div>
+      <div class="next">
+        <div class="row1"><span class="t">10:30</span><span class="end">– 11:15</span><span class="now">Now</span></div>
+        <div class="title">Design review</div>
+        <div class="dur prog" style="width:45%"></div>
+      </div>
+      <div class="ev"><span class="t">13:00</span><span class="title">Lunch with Sam</span><div class="dur" style="width:60%"></div></div>
+      <div class="ev"><span class="t">18:30</span><span class="title">Climbing</span><div class="dur" style="width:90%"></div></div>
+      <div class="sub">Tomorrow</div>
+      <div class="allday"><div>Annual leave <span>All day</span></div></div>
+      <div class="ev"><span class="t">08:15</span><span class="title">Dentist</span><div class="dur" style="width:30%"></div></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--hab)"></span><h3>Habits</h3><span class="meta"><b>2/3</b>done<svg class="ic"><use href="#i-chev"/></svg></span></div>
+      <div class="days"><span></span><span class="letters"><span>M</span><span>T</span><span>W</span><span class="today">T</span><span>F</span><span>S</span><span>S</span></span><span></span></div>
+      <div class="habit">
+        <span class="tick on"><i><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <div><div class="hname">Stretch</div><div class="chain"><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c fut"></i><i class="c off"></i><i class="c off"></i></div></div>
+        <div class="streak"><b>12</b><span>streak</span></div>
+      </div>
+      <div class="habit">
+        <span class="tick"><i></i></span>
+        <div><div class="hname">Read for 20 minutes</div><div class="chain"><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c now"></i><i class="c fut"></i><i class="c fut"></i><i class="c fut"></i></div></div>
+        <div class="streak"><b>31</b><span>streak</span></div>
+      </div>
+      <div class="habit">
+        <span class="tick on"><i><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <div><div class="hname">Run</div><div class="chain"><i class="c off"></i><i class="c done"></i><i class="c off"></i><i class="c done"></i><i class="c off"></i><i class="c fut"></i><i class="c off"></i></div></div>
+        <div class="streak"><b>5</b><span>streak</span></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--todo)"></span><h3>To-dos</h3><span class="meta"><b>3</b>left<svg class="ic"><use href="#i-chev"/></svg></span></div>
+      <div class="todo"><span class="box"><i></i></span><span class="ttl">Renew passport photo</span><span class="due over">Overdue</span></div>
+      <div class="todo"><span class="box"><i></i></span><span class="ttl">Call the garage</span><span class="due">Today</span></div>
+      <div class="todo"><span class="box"><i></i></span><span class="ttl">Order a new bike chain</span><span class="due"></span></div>
+      <div class="todo done"><span class="box on"><i><svg class="ic"><use href="#i-check"/></svg></i></span><span class="ttl">Pay council tax</span><span class="due"></span></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--step)"></span><h3>Steps</h3><span class="meta">Goal 8,000<svg class="ic"><use href="#i-chev"/></svg></span></div>
+      <div class="steps-top">
+        <svg class="ring" viewBox="0 0 112 112"><circle class="trk" cx="56" cy="56" r="50"/><circle class="val" cx="56" cy="56" r="50" stroke-dasharray="245 314.16"/></svg>
+        <div><div class="big">6,240</div><div class="of">of 8,000 today</div><div class="togo">1,760 to go</div></div>
+      </div>
+      <div class="bars">
+        <div class="goal" style="bottom:69.6%"><span>8,000</span></div>
+        <div class="bar met" style="height:79.4%"></div>
+        <div class="bar met" style="height:100%"></div>
+        <div class="bar" style="height:35.3%"></div>
+        <div class="bar met" style="height:72.3%"></div>
+        <div class="bar" style="height:62.8%"></div>
+        <div class="bar met" style="height:77.9%"></div>
+        <div class="bar today" style="height:54.4%"></div>
+      </div>
+      <div class="blabels"><span>F</span><span>S</span><span>S</span><span>M</span><span>T</span><span>W</span><span class="today">T</span></div>
+    </section>
+    <div class="fold"><span>fold · 915 dp</span></div>
+  </div>
+</template>
+
+<template id="first">
+  <div class="phone">
+    <div class="status"><span>10:40</span><span>5G<i></i></span></div>
+    <div class="mast">
+      <div><div class="day">Thursday</div><div class="date">22 October</div></div>
+      <div class="right"><span class="wk">WK 43</span><span class="iconbtn" aria-label="Settings"><svg class="ic"><use href="#i-settings"/></svg></span></div>
+    </div>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--cal)"></span><h3>Calendar</h3></div>
+      <div class="blocked"><p>Calendar access is off, so your events can't show here.</p><span class="btn">Grant access</span></div>
+    </section>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--hab)"></span><h3>Habits</h3></div>
+      <div class="blocked"><p>No habits yet. Add one and tick it off each day it's due.</p><span class="btn text"><svg class="ic"><use href="#i-add"/></svg>Add a habit</span></div>
+    </section>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--todo)"></span><h3>To-dos</h3></div>
+      <div class="blocked"><p>Nothing to do. Add a to-do, with or without a date.</p><span class="btn text"><svg class="ic"><use href="#i-add"/></svg>Add a to-do</span></div>
+    </section>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--step)"></span><h3>Steps</h3></div>
+      <div class="blocked"><p>Health Connect access is off, so your steps can't show here.</p><span class="btn">Grant access</span></div>
+    </section>
+  </div>
+</template>
+
+<template id="habits">
+  <div class="phone">
+    <div class="status"><span>10:40</span><span>5G<i></i></span></div>
+    <div class="appbar"><span class="iconbtn" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></span><h1>Habits</h1></div>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--hab)"></span><h3>Today</h3><span class="meta"><b>2/3</b>done</span></div>
+      <div class="days"><span></span><span class="letters"><span>M</span><span>T</span><span>W</span><span class="today">T</span><span>F</span><span>S</span><span>S</span></span><span></span></div>
+      <div class="habit">
+        <span class="tick on"><i><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <div><div class="hname">Stretch</div><div class="chain"><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c fut"></i><i class="c off"></i><i class="c off"></i></div><div class="hsched">Mon–Fri</div></div>
+        <div class="streak"><b>12</b><span>streak</span></div>
+      </div>
+      <div class="habit">
+        <span class="tick"><i></i></span>
+        <div><div class="hname">Read for 20 minutes</div><div class="chain"><i class="c done"></i><i class="c done"></i><i class="c done"></i><i class="c now"></i><i class="c fut"></i><i class="c fut"></i><i class="c fut"></i></div><div class="hsched">Every day</div></div>
+        <div class="streak"><b>31</b><span>streak</span></div>
+      </div>
+      <div class="habit">
+        <span class="tick on"><i><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <div><div class="hname">Run</div><div class="chain"><i class="c off"></i><i class="c done"></i><i class="c off"></i><i class="c done"></i><i class="c off"></i><i class="c fut"></i><i class="c off"></i></div><div class="hsched">Tue, Thu, Sat</div></div>
+        <div class="streak"><b>5</b><span>streak</span></div>
+      </div>
+    </section>
+    <section class="sec">
+      <div class="sec-head"><h3>Not today</h3></div>
+      <div class="habit off">
+        <span class="tick" style="opacity:.0"><i></i></span>
+        <div><div class="hname">Piano practice</div><div class="chain"><i class="c off"></i><i class="c off"></i><i class="c off"></i><i class="c off"></i><i class="c off"></i><i class="c fut"></i><i class="c fut"></i></div><div class="hsched">Sat, Sun</div></div>
+        <div class="streak"><b>8</b><span>streak</span></div>
+      </div>
+    </section>
+    <div class="snack">Water the plants deleted<b>Undo</b></div>
+    <div class="fab"><svg class="ic"><use href="#i-add"/></svg>Add habit</div>
+  </div>
+</template>
+
+<template id="sheet">
+  <div class="phone">
+    <div class="status"><span>10:40</span><span>5G<i></i></span></div>
+    <div class="appbar"><span class="iconbtn"><svg class="ic"><use href="#i-back"/></svg></span><h1>Habits</h1></div>
+    <section class="sec">
+      <div class="sec-head"><span class="dot" style="background:var(--hab)"></span><h3>Today</h3><span class="meta"><b>2/3</b>done</span></div>
+      <div class="habit"><span class="tick on"><i><svg class="ic"><use href="#i-check"/></svg></i></span><div><div class="hname">Stretch</div></div><div class="streak"><b>12</b><span>streak</span></div></div>
+      <div class="habit"><span class="tick"><i></i></span><div><div class="hname">Read for 20 minutes</div></div><div class="streak"><b>31</b><span>streak</span></div></div>
+    </section>
+    <div class="scrim"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <h2>Edit habit</h2>
+      <div class="field"><label>Name</label><div>Stretch</div></div>
+      <div class="helper"><span>Up to 60 characters</span><span>7 / 60</span></div>
+      <div class="label2">Days</div>
+      <div class="chips"><span class="chip on">M</span><span class="chip on">T</span><span class="chip on">W</span><span class="chip on">T</span><span class="chip on">F</span><span class="chip">S</span><span class="chip">S</span></div>
+      <div class="actions"><span class="btn text"><svg class="ic"><use href="#i-delete"/></svg>Delete</span><span class="btn">Save</span></div>
+    </div>
+  </div>
+</template>
+
+<template id="widget">
+  <div class="phone home">
+    <div class="wall"></div>
+    <div class="status"><span>10:40</span><span>5G<i></i></span></div>
+    <div class="widget">
+      <div class="wd">Thu 22<span>Oct</span></div>
+      <div class="wl"><span class="dot" style="background:var(--cal)"></span><span class="v">10:30 Design review</span></div>
+      <div class="wl"><span class="dot" style="background:var(--step)"></span><span class="v">6,240 <small>/ 8,000</small></span></div>
+      <div class="wl"><span class="dot" style="background:var(--hab)"></span><span class="v">2 / 3 <small>habits</small></span></div>
+    </div>
+    <div class="wcap" style="top:110px">2×2, all sources ready. Tap anywhere opens the dashboard.</div>
+    <div class="widget w2">
+      <div class="wd">Thu 22<span>Oct</span></div>
+      <div class="wl"><span class="dot" style="background:var(--cal)"></span><span class="v">—</span><span class="s">Open to set up</span></div>
+      <div class="wl"><span class="dot" style="background:var(--step)"></span><span class="v">—</span><span class="s">Open to set up</span></div>
+      <div class="wl"><span class="dot" style="background:var(--hab)"></span><span class="v">No habits today</span></div>
+    </div>
+    <div class="wcap" style="top:314px">First run: calendar and Health Connect not yet granted.</div>
+    <div class="apps"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="dock"></div>
+  </div>
+</template>
+
+<div class="band" id="light"><h2>Light</h2></div>
+<div class="band" id="dark"><h2>Dark — the night planner</h2></div>
+
+<div class="notes">
+  <section><h3>World</h3><p>A UK office wall planner: printed ink on laminated stock, a hairline grid, weekend columns shaded. Nothing is coloured until you do something; each tick presses a flat dot sticker onto the day. Misses stay blank, never red.</p></section>
+  <section><h3>Palette</h3><p>Two values per scheme plus four sticker colours. Light: stock <span class="sw" style="background:#F7F9F8"></span><code>#F7F9F8</code>, ink <span class="sw" style="background:#14324F"></span><code>#14324F</code>. Dark: ground <span class="sw" style="background:#0E1C2B"></span><code>#0E1C2B</code>, chalk <span class="sw" style="background:#E6EEF2"></span><code>#E6EEF2</code>. Every neutral is a fixed tint of the ink: secondary text 72&nbsp;% (5.3:1 light), grid 16&nbsp;%, weekend shade 7&nbsp;%. Stickers, light / dark: Calendar <span class="sw" style="background:#2A6DB8"></span><code>#2A6DB8</code> / <code>#6AA5EC</code>, Habits <span class="sw" style="background:#3E9C55"></span><code>#3E9C55</code> / <code>#5DBB72</code>, To-dos <span class="sw" style="background:#E8B92F"></span><code>#E8B92F</code> / <code>#F0C94A</code>, Steps <span class="sw" style="background:#E0573E"></span><code>#E0573E</code> / <code>#F07A5F</code>. Stickers mean source or achievement only. Every action (Grant, Save, FAB, Undo) is in ink.</p></section>
+  <section><h3>Type</h3><p>Barlow Condensed (500/600/700) for the masthead, section heads, times and every numeral, tabular. Barlow (400/500/600) for names, titles and body. Both OFL, bundled as <code>res/font</code> in T4 (no downloadable-fonts provider). All sizes in sp.</p></section>
+  <section><h3>Structure</h3><p>No cards and no elevation. The dashboard is one ruled sheet: a 2&nbsp;dp ink rule opens each section, 1&nbsp;dp grid lines separate rows, 4&nbsp;dp corners throughout (8&nbsp;dp on the FAB, 12&nbsp;dp on the sheet's top). Each section head is a 48&nbsp;dp target that opens its screen (Calendar and Steps open Settings).</p></section>
+  <section><h3>Calendar</h3><p>All-day events as washed bars. The next event, or the one in progress, is set large with its end time and a <b>Now</b> stamp. Every timed event carries a duration rule whose length is proportional to its length (full width = 2&nbsp;h, capped); the tick on the in-progress rule marks now.</p></section>
+  <section><h3>Habits</h3><p>Left: today's tick, 48&nbsp;dp. Middle: the name and this week's chain, Mon–Sun under one shared letter row, today underlined. A green dot is a done day, an empty ring a missed scheduled day, a shaded square an unscheduled day (the planner's weekend tint), a dotted ring a day still to come. Right: the streak, large. Signature moment: the tick presses the sticker on, 1.12 → 1 scale with a 3° settle over 200&nbsp;ms; instant when animations are off.</p></section>
+  <section><h3>To-dos and Steps</h3><p>To-dos on ruled lines. Overdue is marked in heavy ink caps with a small yellow pennant, not red. Done-today items keep a yellow tick and strike through. Steps: a flat ring (today / goal) beside the uncapped count, then 7 bars, today last and outlined. Bars that met the goal turn tomato; the rest stay in ink tint. Colour is earned.</p></section>
+  <section><h3>Order</h3><p>D18 kept: Calendar → Habits → To-dos → Steps. The planner reads time first, then what you do with it. On a 412&nbsp;dp phone, Calendar and the Habits head land above the fold; at 360&nbsp;dp, Calendar holds the first viewport.</p></section>
+</div>
+
+<script>
+  const ids = ["dash", "first", "habits", "sheet", "widget"];
+  const caps = {
+    dash: "Dashboard · full scroll",
+    first: "Dashboard · first launch",
+    habits: "Habits · after delete",
+    sheet: "Habits · edit sheet",
+    widget: "Widget 2×2 · ready / first run"
+  };
+  for (const scheme of ["light", "dark"]) {
+    const band = document.getElementById(scheme);
+    for (const id of ids) {
+      const fig = document.createElement("figure");
+      fig.id = `${scheme}-${id}`;
+      const node = document.getElementById(id).content.firstElementChild.cloneNode(true);
+      node.classList.add(scheme);
+      fig.appendChild(node);
+      const cap = document.createElement("figcaption");
+      cap.textContent = caps[id];
+      fig.appendChild(cap);
+      band.appendChild(fig);
+    }
+  }
+  // ?frame=light-dash renders one bare frame, for PNG capture.
+  const only = new URLSearchParams(location.search).get("frame");
+  if (only) {
+    const phone = document.getElementById(only).querySelector(".phone");
+    document.body.replaceChildren(document.querySelector("svg"), phone);
+    document.body.style.padding = "0";
+    phone.style.borderRadius = "0";
+    phone.style.boxShadow = "none";
+    phone.querySelector(".fold")?.remove();
+  }
+</script>
+</body>
+</html>

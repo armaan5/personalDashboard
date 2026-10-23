@@ -33,8 +33,41 @@ for events. Dependency allowlist: `PRD.md` A3.
 | Configurable or 04:00 day rollover | D13 | Local midnight |
 | N-per-week habits | D14 | Chosen weekdays |
 | Reorder/hide cards | D18 | Fixed order |
+| Dynamic Color (Material You) scheme | D23 | Own fixed palette chosen |
+| Stock Material 3 card-stack look | D23 | Owner: "generic Material template" |
 
 ## Log
+
+### 2026-10-22 — D23: visual direction "The Wall Planner" (T3)
+
+**Owner ask.** T3 design gate (D12). Impeccable native/Android round, seed `b0779a3e`, Operate
+mode. Owner answers: users are the owner plus tech-savvy friends; use is quick glances through
+the day; brand commitments "calm, no nagging" and "streaks are motivating" (`PRODUCT.md`); an own
+fixed palette, not Dynamic Color; to feel wrong it would be a generic Material template,
+gamified/fitness-loud, or a dense spreadsheet.
+
+**Decided.** The owner picked the rolled direction **The Wall Planner** (a UK office wall planner
+crossed with a don't-break-the-chain calendar) over the Desk Appliance pick, the Ticket Wallet
+challenger and the Material 3 standard, and approved the comps as drawn:
+
+- Comp files: `design/t3/comps.html` (source of truth for tokens) and the captures
+  `design/t3/{light,dark}-{dash,first,habits,sheet,widget}.png`, `design/t3/sheet.png`.
+- Two values per scheme (light stock `#F7F9F8` / ink `#14324F`; dark ground `#0E1C2B` / chalk
+  `#E6EEF2`), every neutral a fixed tint of the ink. Four sticker colours, one per source, used
+  only for source identity and achievement. Every action is drawn in ink.
+- No cards, no elevation: one ruled sheet, 4 dp corners.
+- Type: Barlow Condensed + Barlow, bundled as `res/font` in T4 (resources, not a library; no
+  downloadable-fonts provider).
+- Habits show this week's Mon–Sun chain under a shared letter row.
+- Signature tick: a sticker pressed on, instant when animations are off.
+- **Card order: D18 kept** (Calendar → Habits → To-dos → Steps). SPEC §6.1 is unchanged.
+
+**Rejected.** Dynamic Color / wallpaper-derived scheme (owner chose an own palette). The stock
+Material 3 card stack (owner: "generic Material template").
+
+**Accepted.** `DESIGN.md` is still written from the shipped UI in T9. The direction contract
+lives in the local impeccable surface brief (`.impeccable/surfaces/`, gitignored). The comp
+sheet loads Barlow from Google Fonts in a browser only; the app never does (D3).
 
 ### 2026-10-22 — D1–D22: v1 scope
 
