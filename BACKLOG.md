@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Wave 2 (D27: status-bar band, theme setting) added 2026-10-23, U1–U4. Frontier: **U1**, **U2** (parallel). Open feedback: F2.
+**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Wave 2 (D27: status-bar band, theme setting) added 2026-10-23, U1–U4. U1–U3 done. Frontier: **U4** (owner pass). Open feedback: F2.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. Wave 2: (U1 ∥ U2) → U3 → U4. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -350,7 +350,7 @@ Accept:
 Non-goals: no gradient or fading scrim (D27 g). No change to the `TopBar` screens or the
 navigation-bar inset. No collapsing masthead.
 
-### U2 — Theme setting: System / Light / Dark (F4) — *added 2026-10-23*
+### U2 — Theme setting: System / Light / Dark (F4) — *added 2026-10-23* — **DONE 2026-10-23** (c67bdb1)
 Files: `core/…/app/{Settings,Event,Effect,Reduce}.kt`, `core/…/app/Theme.kt` (new),
 `core/test/…/app/ThemeTest.kt` (new), `app/…/data/Settings.kt`, `app/…/MainViewModel.kt`,
 `app/…/MainActivity.kt`, `app/…/PrivacyRationaleActivity.kt`, `app/…/ui/theme/Theme.kt`,
@@ -385,7 +385,7 @@ Accept:
 Non-goals: no widget change (U3). No pure-black palette, scheduled switching or accent choice
 (D27 g). No change to the window theme or splash (D27 assumptions). No Dynamic Color (D23).
 
-### U3 — Widget follows the theme choice — *added 2026-10-23*
+### U3 — Widget follows the theme choice — *added 2026-10-23* — **DONE 2026-10-23** (71c8f5f)
 Files: `core/…/app/Theme.kt`, `core/test/…/app/ThemeTest.kt`, `app/…/widget/DashboardWidget.kt`,
 `SPEC.md` §6.2.
 
