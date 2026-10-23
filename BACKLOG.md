@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D23) in progress. T0–T4 done 2026-10-22. Frontier: **T5**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
+**Status:** Wave 1 (v1, D1–D23) in progress. T0–T5 done 2026-10-22. Frontier: **T6**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -158,7 +158,7 @@ Accept:
 Non-goals: no habit reordering, no editing past days, no to-do/calendar/steps content, no
 animations beyond what the comps specify.
 
-### T5 — To-dos — *added 2026-10-22*
+### T5 — To-dos — *added 2026-10-22* — **DONE 2026-10-22** (fdde0b9)
 Files: `app/…/ui/dashboard/TodosCard.kt`, `app/…/ui/todos/TodosScreen.kt`,
 `app/…/ui/todos/TodoSheet.kt`, `app/…/MainViewModel.kt`, `app/…/ui/dashboard/DashboardScreen.kt`,
 `app/src/main/res/values/strings.xml`, `app/androidTest/…/ui/TodosFlowTest.kt`.
