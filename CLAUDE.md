@@ -4,8 +4,9 @@
 
 **v1 in progress.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
-Frontier: **T3** (owner design gate, blocks T4) and **O1** (release signing, needs the owner's keystore). `.claude/` ported from
-Quickmate 2026-10-14. No `PRODUCT.md` (T3) or `DESIGN.md` (T9) yet.
+T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
+Frontier: **T4** (theme + dashboard + Habits, builds from `design/t3/comps.html`) and **O1** (release signing, needs the owner's
+keystore). `.claude/` ported from Quickmate 2026-10-14. No `DESIGN.md` (T9) yet.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -37,8 +38,9 @@ The Quickmate document set, one job each. Create each when its first content exi
   gates. Self-contained; a fresh session executes it top to bottom without re-deriving seams.
 - **`DESIGN.md` — *how it looks*.** Written by the impeccable documenter from the shipped UI,
   not ahead of it. Compose theme tokens are the source; the doc describes them. *Not yet written.*
+  Until then, the approved T3 comps are the visual authority: `design/t3/comps.html` (D23).
 - **`PRODUCT.md` — *who it is for*.** Users, positioning, hard UI constraints, voice (en-GB),
-  accessibility bar. Read before touching copy. Impeccable's `init` writes it. *Not yet written.*
+  accessibility bar. Read before touching copy. Impeccable's `init` writes it.
 - **`FEEDBACK.md` — *what was asked*.** Append-only inbox, `F<n>` items with a status line.
   `/feedback` digests open items into a D-entry or PRD, SPEC patches, and a BACKLOG wave, then
   stops for "go".
@@ -135,4 +137,4 @@ local state and gitignored.
 
 ## Still open
 
-- Visual direction and final card order — T3 (owner gate).
+- Nothing beyond the BACKLOG frontier. (T3 closed visual direction and card order, D23.)

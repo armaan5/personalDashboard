@@ -1,7 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D22) in progress. T0, T1, T2 done 2026-10-22. Frontier: **T3** (owner gate, blocks T4) and
-**O1**.
+**Status:** Wave 1 (v1, D1–D23) in progress. T0, T1, T2, T3 done 2026-10-22. Frontier: **T4** and **O1**.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -112,7 +111,7 @@ Accept:
 Non-goals: no DataStore (T6), no UI, no migrations (none exist at v1), and no
 `fallbackToDestructiveMigration` ever.
 
-### T3 — Design direction round — **OWNER gate** — *added 2026-10-22*
+### T3 — Design direction round — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-22** (a83a7a7)
 Files: `PRODUCT.md` (new), `.impeccable/` (local, gitignored), comps as the skill emits them.
 
 Run `impeccable` in native/Android mode (`reference/android.md`) for the dashboard (four cards,
