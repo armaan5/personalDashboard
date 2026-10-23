@@ -30,8 +30,10 @@ import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.Message
 import dev.armaan.pd.app.Screen
 import dev.armaan.pd.habit.habitsToday
+import dev.armaan.pd.todo.buckets
 import dev.armaan.pd.ui.dashboard.DashboardScreen
 import dev.armaan.pd.ui.habits.HabitsScreen
+import dev.armaan.pd.ui.todos.TodosScreen
 import kotlinx.coroutines.launch
 
 /** Maps reducer state to screens and runs the UI effects. No rules here (D10). */
@@ -42,11 +44,13 @@ fun MainScreen(vm: MainViewModel) {
     val habits = remember(state.habits, state.completions, today) {
         habitsToday(state.habits, state.completions, today)
     }
+    val todos = remember(state.todos, today) { buckets(state.todos, today) }
     val snackbar = remember { SnackbarHostState() }
     val activity = LocalActivity.current
     val resources = LocalResources.current
-    // The dashboard's “Add a habit” opens Habits with the sheet up.
+    // The dashboard's “Add a habit” / “Add a to-do” open their screen with the sheet up.
     var addHabit by rememberSaveable { mutableStateOf(false) }
+    var addTodo by rememberSaveable { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         vm.refreshDay()
@@ -91,7 +95,18 @@ fun MainScreen(vm: MainViewModel) {
             onSave = { id, name, days -> vm.dispatch(Event.SaveHabit(id, name, days)) },
             onDelete = { vm.dispatch(Event.DeleteHabit(it)) },
         )
-        // To-dos and Settings arrive with T5 and T6; nothing opens them yet.
+        Screen.Todos -> TodosScreen(
+            buckets = todos,
+            anyTodos = state.todos.isNotEmpty(),
+            snackbar = snackbar,
+            startAdding = addTodo,
+            onStartedAdding = { addTodo = false },
+            onBack = { vm.dispatch(Event.Back) },
+            onTick = { vm.dispatch(Event.ToggleTodo(it)) },
+            onSave = { id, title, due -> vm.dispatch(Event.SaveTodo(id, title, due)) },
+            onClearHistory = { vm.dispatch(Event.ClearHistory) },
+        )
+        // Settings arrives with T6; nothing opens it yet.
         else -> Box(Modifier.fillMaxSize()) {
             DashboardScreen(
                 today = today,
@@ -103,6 +118,14 @@ fun MainScreen(vm: MainViewModel) {
                     vm.dispatch(Event.Open(Screen.Habits))
                 },
                 onTick = { vm.dispatch(Event.ToggleHabit(it, today)) },
+                todos = todos,
+                anyTodos = state.todos.isNotEmpty(),
+                onOpenTodos = { vm.dispatch(Event.Open(Screen.Todos)) },
+                onAddTodo = {
+                    addTodo = true
+                    vm.dispatch(Event.Open(Screen.Todos))
+                },
+                onTickTodo = { vm.dispatch(Event.ToggleTodo(it)) },
             )
             SnackbarHost(
                 snackbar,

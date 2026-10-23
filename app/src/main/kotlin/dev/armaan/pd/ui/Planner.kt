@@ -14,16 +14,23 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -301,6 +308,42 @@ private fun Chain(week: List<ChainDay>) {
                 }
             }
         }
+    }
+}
+
+/** A screen's top bar: Back, then the screen title as a heading. */
+@Composable
+fun TopBar(title: String, onBack: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .heightIn(min = 64.dp)
+            .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(onClick = onBack) {
+            Icon(PdIcons.Back, contentDescription = stringResource(R.string.back), tint = Pd.colors.ink)
+        }
+        Text(
+            title,
+            style = MaterialTheme.typography.headlineMedium,
+            color = Pd.colors.ink,
+            modifier = Modifier.padding(start = 4.dp).semantics { heading() },
+        )
+    }
+}
+
+/**
+ * A sheet's top edge: the 2 dp ink rule every planner section opens with (D23), then the drag
+ * handle. The sheet's shape clips the rule into its rounded corners.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SheetHandle() {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.fillMaxWidth().height(2.dp).background(Pd.colors.ink))
+        BottomSheetDefaults.DragHandle(color = Pd.colors.ink2)
     }
 }
 

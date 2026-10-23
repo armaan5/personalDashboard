@@ -106,6 +106,13 @@ state recomputation uses the new zone. Stored dates are not rewritten.
   deletes all `history` items, with an Undo snackbar.
 - **Tick:** sets `completed_on = today`. **Untick** (from `doneToday` or Undo) clears it. Items in
   `history` can't be unticked in v1.
+- **Presentation** (*amended 2026-10-22*, T5): the card head shows "N left", N = `overdue` +
+  `today` + `undated`; TalkBack reads "To-dos, N left", "To-dos, nothing due" (only `upcoming` or
+  `history` exist) or "To-dos, nothing to do" (no to-dos). Row labels: `overdue` "OVERDUE" with
+  the yellow pennant, `today` "Today", `upcoming` the due date, `history` the completion date. The
+  screen's card sections sit under **Today**; **Done** starts collapsed. The sheet edits any
+  to-do outside `history`. There is no single-item delete in v1: a to-do leaves by tick, then
+  Clear history.
 
 ### 4.4 Reducer
 

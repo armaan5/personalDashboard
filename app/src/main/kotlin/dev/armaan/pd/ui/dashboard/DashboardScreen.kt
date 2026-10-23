@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import dev.armaan.pd.R
 import dev.armaan.pd.habit.HabitsToday
+import dev.armaan.pd.todo.Buckets
 import dev.armaan.pd.ui.Section
 import dev.armaan.pd.ui.SectionHead
 import dev.armaan.pd.ui.UiLocale
@@ -37,8 +38,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.IsoFields
 
 /**
- * SPEC §6.1: four sections in the D18 order on one ruled sheet (D23). Calendar, To-dos and Steps
- * are titled placeholders until T5–T7 fill them.
+ * SPEC §6.1: four sections in the D18 order on one ruled sheet (D23). Calendar and Steps are
+ * titled placeholders until T6–T7 fill them.
  */
 @Composable
 fun DashboardScreen(
@@ -48,6 +49,11 @@ fun DashboardScreen(
     onOpenHabits: () -> Unit,
     onAddHabit: () -> Unit,
     onTick: (habitId: Long) -> Unit,
+    todos: Buckets,
+    anyTodos: Boolean,
+    onOpenTodos: () -> Unit,
+    onAddTodo: () -> Unit,
+    onTickTodo: (todoId: Long) -> Unit,
 ) {
     val insets = WindowInsets.safeDrawing.asPaddingValues()
     val dir = LocalLayoutDirection.current
@@ -64,7 +70,7 @@ fun DashboardScreen(
         item { Masthead(today) }
         item { Placeholder(stringResource(R.string.section_calendar), Pd.colors.calendar) }
         item { HabitsCard(habits, anyHabits, today, onOpenHabits, onAddHabit, onTick) }
-        item { Placeholder(stringResource(R.string.section_todos), Pd.colors.todos) }
+        item { TodosCard(todos, anyTodos, onOpenTodos, onAddTodo, onTickTodo) }
         item { Placeholder(stringResource(R.string.section_steps), Pd.colors.steps) }
     }
 }

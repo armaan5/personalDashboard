@@ -47,6 +47,7 @@ import dev.armaan.pd.R
 import dev.armaan.pd.habit.HABIT_NAME_MAX
 import dev.armaan.pd.habit.Habit
 import dev.armaan.pd.habit.cleanHabitName
+import dev.armaan.pd.ui.SheetHandle
 import dev.armaan.pd.ui.UiLocale
 import dev.armaan.pd.ui.theme.Pd
 import dev.armaan.pd.ui.theme.PdIcons
@@ -89,6 +90,7 @@ fun HabitSheet(
         contentColor = c.ink,
         scrimColor = c.scrim,
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+        dragHandle = { SheetHandle() },
     ) {
         Column(
             Modifier

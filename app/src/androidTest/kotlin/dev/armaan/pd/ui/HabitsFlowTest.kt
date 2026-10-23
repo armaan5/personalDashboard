@@ -118,7 +118,7 @@ class HabitsFlowTest {
     @Test
     fun everyCardAndControl_hasAContentDescription() {
         seedStretch()
-        listOf("Calendar", "Habits, 0 of 1 done", "To-dos", "Steps").forEach {
+        listOf("Calendar", "Habits, 0 of 1 done", "To-dos, nothing to do", "Steps").forEach {
             rule.onNodeWithContentDescription(it).assertExists()
         }
         assertControlsLabelled()

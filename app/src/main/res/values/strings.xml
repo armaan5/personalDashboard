@@ -44,6 +44,48 @@
     <string name="delete">Delete</string>
     <string name="back">Back</string>
 
+    <!-- To-dos card and screen (SPEC §4.3) -->
+    <plurals name="todos_card_cd">
+        <item quantity="one">To-dos, %d left</item>
+        <item quantity="other">To-dos, %d left</item>
+    </plurals>
+    <string name="todos_card_none_cd">To-dos, nothing to do</string>
+    <string name="todos_card_nothing_due_cd">To-dos, nothing due</string>
+    <string name="todos_left">left</string>
+    <string name="todos_none_yet">Nothing to do. Add a to-do, with or without a date.</string>
+    <string name="todos_nothing_due">Nothing due. Later to-dos are on the To-dos screen.</string>
+    <string name="todos_nothing_due_screen">Nothing due. Add a to-do, with or without a date.</string>
+    <string name="add_a_todo">Add a to-do</string>
+    <string name="todos_title">To-dos</string>
+    <string name="todos_today">Today</string>
+    <string name="todos_upcoming">Upcoming</string>
+    <string name="todos_done">Done</string>
+    <plurals name="todos_done_cd">
+        <item quantity="one">Done, %d to-do</item>
+        <item quantity="other">Done, %d to-dos</item>
+    </plurals>
+    <string name="todos_expanded">Expanded</string>
+    <string name="todos_collapsed">Collapsed</string>
+    <string name="clear_history">Clear history</string>
+    <string name="todo_overdue">Overdue</string>
+    <string name="todo_due_today">Today</string>
+    <string name="todo_due_cd">due %1$s</string>
+    <string name="todo_done_on_cd">done %1$s</string>
+    <string name="todo_tick_cd">Tick %1$s</string>
+    <string name="todo_edit_action">Edit</string>
+
+    <!-- To-do sheet -->
+    <string name="add_todo">Add to-do</string>
+    <string name="edit_todo">Edit to-do</string>
+    <string name="todo_title">Title</string>
+    <string name="todo_title_helper" tools:ignore="PluralsCandidate">Up to %1$d characters</string>
+    <string name="todo_due_date">Due date</string>
+    <string name="todo_no_date">No date</string>
+    <string name="todo_date_cd">Due date, %1$s. Change</string>
+    <string name="todo_remove_date">Remove date</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
     <!-- Snackbars (SPEC §4.4 Message) -->
     <string name="undo">Undo</string>
     <string name="snack_habit_deleted">%1$s deleted</string>

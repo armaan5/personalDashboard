@@ -2,20 +2,12 @@ package dev.armaan.pd.ui.habits
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,11 +18,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.armaan.pd.R
@@ -42,6 +32,7 @@ import dev.armaan.pd.ui.EmptyLine
 import dev.armaan.pd.ui.HabitLine
 import dev.armaan.pd.ui.Section
 import dev.armaan.pd.ui.SectionHead
+import dev.armaan.pd.ui.TopBar
 import dev.armaan.pd.ui.UiLocale
 import dev.armaan.pd.ui.WeekLetters
 import dev.armaan.pd.ui.theme.Pd
@@ -79,7 +70,7 @@ fun HabitsScreen(
     val all = habits.scheduled + habits.notToday
 
     Scaffold(
-        topBar = { TopBar(onBack) },
+        topBar = { TopBar(stringResource(R.string.habits_title), onBack) },
         snackbarHost = { SnackbarHost(snackbar) },
         floatingActionButton = {
             val label = stringResource(R.string.add_habit)
@@ -164,28 +155,6 @@ fun HabitsScreen(
                 onDismiss = { editing = NONE },
             )
         }
-    }
-}
-
-@Composable
-private fun TopBar(onBack: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .height(64.dp)
-            .padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(PdIcons.Back, contentDescription = stringResource(R.string.back), tint = Pd.colors.ink)
-        }
-        Text(
-            stringResource(R.string.habits_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = Pd.colors.ink,
-            modifier = Modifier.padding(start = 4.dp).semantics { heading() },
-        )
     }
 }
 

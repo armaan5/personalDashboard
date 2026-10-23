@@ -60,6 +60,11 @@ data class PdType(
     val week: TextStyle = condensed(FontWeight.SemiBold, 15, 18, 0.04),
     val habitName: TextStyle = barlow(FontWeight.Medium, 17, 22),
     val schedule: TextStyle = condensed(FontWeight.Medium, 13, 16, 0.03),
+    val todoTitle: TextStyle = barlow(FontWeight.Normal, 16, 21),
+    /** A to-do's due date at the row's end. */
+    val due: TextStyle = condensed(FontWeight.SemiBold, 14, 16, 0.03),
+    /** “OVERDUE”, heavy ink capitals beside the pennant (D23). */
+    val overdue: TextStyle = condensed(FontWeight.Bold, 14, 16, 0.07),
 )
 
 val PdTypography = Typography(
