@@ -271,7 +271,8 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
 
 ### 6.1 App
 
-- One Activity, edge-to-edge. Four screens:
+- One Activity, edge-to-edge; on the Dashboard the status-bar inset is a solid stock band and the
+  list is clipped below it (*amended 2026-10-23*, U1, D27). Four screens:
   - **Dashboard:** the four cards in the D18 order, as T3 approves it. Each card's header opens
     its screen (Calendar and Steps open Settings).
   - **Habits:** today's scheduled habits with tick and streak, then "Not today". Add/edit sheet

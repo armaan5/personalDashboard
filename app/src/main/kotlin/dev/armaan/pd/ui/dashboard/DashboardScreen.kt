@@ -1,5 +1,6 @@
 package dev.armaan.pd.ui.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -71,21 +73,24 @@ fun DashboardScreen(
 ) {
     val insets = WindowInsets.safeDrawing.asPaddingValues()
     val dir = LocalLayoutDirection.current
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = insets.calculateStartPadding(dir),
-            end = insets.calculateEndPadding(dir),
-            top = insets.calculateTopPadding(),
-            bottom = insets.calculateBottomPadding() + 32.dp,
-        ),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        item { Masthead(today, onOpenSettings) }
-        item { CalendarCard(calendarAccess, agenda, now, zone, onCalendarShown, onGrantCalendar, onOpenSettings) }
-        item { HabitsCard(habits, anyHabits, today, onOpenHabits, onAddHabit, onTick) }
-        item { TodosCard(todos, anyTodos, onOpenTodos, onAddTodo, onTickTodo) }
-        item { StepsCard(steps, stepGoal, onStepsShown, onGrantSteps, onOpenSettings) }
+    Column(Modifier.fillMaxSize()) {
+        // The top inset is a solid stock band, and the list is clipped below it (D27 a).
+        Spacer(Modifier.fillMaxWidth().windowInsetsTopHeight(WindowInsets.safeDrawing).background(Pd.colors.stock))
+        LazyColumn(
+            Modifier.weight(1f),
+            contentPadding = PaddingValues(
+                start = insets.calculateStartPadding(dir),
+                end = insets.calculateEndPadding(dir),
+                bottom = insets.calculateBottomPadding() + 32.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            item { Masthead(today, onOpenSettings) }
+            item { CalendarCard(calendarAccess, agenda, now, zone, onCalendarShown, onGrantCalendar, onOpenSettings) }
+            item { HabitsCard(habits, anyHabits, today, onOpenHabits, onAddHabit, onTick) }
+            item { TodosCard(todos, anyTodos, onOpenTodos, onAddTodo, onTickTodo) }
+            item { StepsCard(steps, stepGoal, onStepsShown, onGrantSteps, onOpenSettings) }
+        }
     }
 }
 
