@@ -328,7 +328,7 @@ U1 (F3) and U2 (F4) touch different files and run in parallel worktrees. U3 foll
 reads U2's setting. U3 is the wave's last code ticket and runs the full chain. U4 is the owner
 pass on the S25. No new dependency.
 
-### U1 — Status-bar band on the Dashboard (F3) — *added 2026-10-23*
+### U1 — Status-bar band on the Dashboard (F3) — *added 2026-10-23* — **DONE 2026-10-23** (2e70cd9)
 Files: `app/…/ui/dashboard/DashboardScreen.kt`, `app/androidTest/…/ui/DashboardInsetsTest.kt` (new),
 `SPEC.md` §6.1.
 
