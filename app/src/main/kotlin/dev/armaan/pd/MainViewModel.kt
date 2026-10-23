@@ -190,6 +190,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             Effect.OpenHealthConnectInstall -> ui.send(UiEffect.OpenHealthConnectInstall)
             Effect.OpenHealthConnectSettings -> ui.send(UiEffect.OpenHealthConnectSettings)
             is Effect.WriteStepGoal -> container.settings.setStepGoal(effect.goal)
+            is Effect.WriteTheme -> container.settings.setTheme(effect.choice)
             Effect.RefreshWidget -> container.refreshWidget()
             is Effect.ShowSnackbar -> ui.send(UiEffect.Snackbar(effect.message, effect.undo))
             Effect.Finish -> ui.send(UiEffect.Finish)

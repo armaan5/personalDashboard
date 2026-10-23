@@ -69,4 +69,7 @@ sealed interface Event {
 
     /** Settings → Step goal stepper; the reducer clamps it. */
     data class SetStepGoal(val goal: Int) : Event
+
+    /** Settings → Theme chips (D27 c). */
+    data class SetTheme(val choice: ThemeChoice) : Event
 }

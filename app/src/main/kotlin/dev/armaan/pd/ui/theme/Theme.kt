@@ -1,6 +1,13 @@
 package dev.armaan.pd.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.graphics.Color as AndroidColor
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import dev.armaan.pd.app.ThemeChoice
+import dev.armaan.pd.app.isDark
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -55,9 +62,34 @@ private fun PdColors.scheme(dark: Boolean): ColorScheme {
     )
 }
 
-/** Light and dark follow the system; no Dynamic Color (D23). */
+/**
+ * An activity's theme for Settings → Theme [choice] (D27): light or dark, and the status- and
+ * navigation-bar icons to match. The one place the system's dark mode is read.
+ *
+ * [choice] is null until settings have loaded; nothing is drawn until then (the window background
+ * shows), so a forced theme never flashes the other scheme's screen first.
+ */
 @Composable
-fun PdTheme(dark: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun PdTheme(choice: ThemeChoice?, content: @Composable () -> Unit) {
+    if (choice == null) return
+    val dark = isDark(choice, systemDark = androidx.compose.foundation.isSystemInDarkTheme())
+    val activity = LocalActivity.current as? ComponentActivity
+    LaunchedEffect(activity, dark) {
+        activity?.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT) { dark },
+            navigationBarStyle = SystemBarStyle.auto(NavLightScrim, NavDarkScrim) { dark },
+        )
+    }
+    PdTheme(dark, content)
+}
+
+/** `enableEdgeToEdge`'s own navigation-bar scrims (three-button navigation on 28). */
+private val NavLightScrim = AndroidColor.argb(0xe6, 0xFF, 0xFF, 0xFF)
+private val NavDarkScrim = AndroidColor.argb(0x80, 0x1b, 0x1b, 0x1b)
+
+/** Light or dark planner tokens; no Dynamic Color (D23). */
+@Composable
+fun PdTheme(dark: Boolean, content: @Composable () -> Unit) {
     val colors = if (dark) DarkColors else LightColors
     CompositionLocalProvider(LocalPdColors provides colors, LocalPdType provides PdType()) {
         MaterialTheme(

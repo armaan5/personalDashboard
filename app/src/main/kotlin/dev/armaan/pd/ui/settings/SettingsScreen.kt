@@ -1,6 +1,9 @@
 package dev.armaan.pd.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +15,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -32,7 +39,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.armaan.pd.R
+import dev.armaan.pd.app.ThemeChoice
 import dev.armaan.pd.steps.GoalMax
 import dev.armaan.pd.steps.GoalMin
 import dev.armaan.pd.steps.GoalStep
@@ -42,13 +51,15 @@ import dev.armaan.pd.ui.TopBar
 import dev.armaan.pd.ui.theme.Pd
 import dev.armaan.pd.ui.theme.PdIcons
 
-/** SPEC §6.1 Settings: Calendars, Step goal, About. */
+/** SPEC §6.1 Settings: Calendars, Step goal, Theme, About. */
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
     onOpenCalendars: () -> Unit,
     stepGoal: Int,
     onStepGoal: (Int) -> Unit,
+    theme: ThemeChoice,
+    onTheme: (ThemeChoice) -> Unit,
     onOpenAbout: () -> Unit,
 ) {
     Scaffold(
@@ -68,6 +79,8 @@ fun SettingsScreen(
                     )
                     HorizontalDivider(thickness = 1.dp, color = Pd.colors.rule)
                     StepGoalRow(stepGoal, onStepGoal)
+                    HorizontalDivider(thickness = 1.dp, color = Pd.colors.rule)
+                    ThemeRow(theme, onTheme)
                     HorizontalDivider(thickness = 1.dp, color = Pd.colors.rule)
                     SettingsRow(stringResource(R.string.settings_about), stringResource(R.string.settings_about_hint), onOpenAbout)
                 }
@@ -142,6 +155,56 @@ private fun StepGoalRow(goal: Int, onChange: (Int) -> Unit) {
             text(Modifier.weight(1f))
             stepper()
         }
+    }
+}
+
+/**
+ * D27 c, e: three chips in the weekday-chip style, one always chosen. TalkBack reads each as a
+ * radio button with its selected state, in a group.
+ */
+@Composable
+private fun ThemeRow(choice: ThemeChoice, onChange: (ThemeChoice) -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
+        Text(stringResource(R.string.settings_theme), style = Pd.type.habitName, color = Pd.colors.ink)
+        Text(
+            stringResource(R.string.settings_theme_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = Pd.colors.ink2,
+            modifier = Modifier.padding(top = 3.dp),
+        )
+        Row(
+            Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 4.dp).selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            ThemeChoice.entries.forEach { option ->
+                ThemeChip(stringResource(option.label), option == choice, Modifier.weight(1f)) { onChange(option) }
+            }
+        }
+    }
+}
+
+private val ThemeChoice.label: Int
+    get() = when (this) {
+        ThemeChoice.System -> R.string.theme_system
+        ThemeChoice.Light -> R.string.theme_light
+        ThemeChoice.Dark -> R.string.theme_dark
+    }
+
+/** `DESIGN.md` Chips: off is a 1.5 dp ink-2 outline with ink text; on is an ink fill with stock text. */
+@Composable
+private fun ThemeChip(label: String, on: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val c = Pd.colors
+    val shape = RoundedCornerShape(4.dp)
+    Box(
+        modifier
+            .heightIn(min = 48.dp)
+            .clip(shape)
+            .then(if (on) Modifier.background(c.ink) else Modifier.border(1.5.dp, c.ink2, shape))
+            .selectable(selected = on, role = Role.RadioButton, onClick = onClick)
+            .padding(horizontal = 4.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(label, style = Pd.type.week.copy(fontSize = 17.sp), color = if (on) c.onInk else c.ink, textAlign = TextAlign.Center)
     }
 }
 

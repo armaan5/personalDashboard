@@ -43,6 +43,7 @@ import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.Message
 import dev.armaan.pd.app.PermissionKind
 import dev.armaan.pd.app.Screen
+import dev.armaan.pd.app.ThemeChoice
 import dev.armaan.pd.calendar.agenda
 import dev.armaan.pd.calendar.shownCalendars
 import dev.armaan.pd.habit.habitsToday
@@ -158,6 +159,8 @@ fun MainScreen(vm: MainViewModel) {
             onOpenCalendars = { vm.dispatch(Event.Open(Screen.Calendars)) },
             stepGoal = stepGoal,
             onStepGoal = { vm.dispatch(Event.SetStepGoal(it)) },
+            theme = state.settings?.theme ?: ThemeChoice.System,
+            onTheme = { vm.dispatch(Event.SetTheme(it)) },
             onOpenAbout = { vm.dispatch(Event.Open(Screen.About)) },
         )
         Screen.About -> AboutScreen(onBack = { vm.dispatch(Event.Back) })

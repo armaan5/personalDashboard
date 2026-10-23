@@ -28,6 +28,7 @@ private val Effect.changesWidget: Boolean
     get() = when (this) {
         is Effect.WriteHabit, is Effect.DeleteHabit, is Effect.RestoreHabit, is Effect.ToggleCompletion,
         is Effect.WriteTodo, is Effect.DeleteTodos, is Effect.WriteStepGoal, is Effect.WriteCalendarIds,
+        is Effect.WriteTheme,
         -> true
         else -> false
     }
@@ -84,6 +85,7 @@ private fun step(state: State, event: Event, now: Instant, zone: ZoneId): Next {
             else Next(state)
         Event.GrantSteps -> grantSteps(state)
         is Event.SetStepGoal -> Next(state, listOf(Effect.WriteStepGoal(clampGoal(event.goal))))
+        is Event.SetTheme -> Next(state, listOf(Effect.WriteTheme(event.choice)))
     }
 }
 

@@ -8,4 +8,5 @@ data class Settings(
     val askedCalendar: Boolean = false,
     val stepGoal: Int = GoalDefault,
     val askedHealth: Boolean = false,
+    val theme: ThemeChoice = ThemeChoice.System,
 )

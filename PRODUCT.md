@@ -93,5 +93,5 @@ PRD A1 bar:
   3 done").
 - 48 dp minimum touch targets.
 - Layout holds at 360 dp width and 200 % font scale.
-- Dark theme follows the system, with no in-app toggle.
+- Dark theme follows the system by default; Settings → Theme can force Light or Dark (D27).
 - Portrait and landscape both work (landscape stretches; no tablet layouts, D21).
