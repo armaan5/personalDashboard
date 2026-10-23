@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D26) in progress. T0–T6 done 2026-10-22, T7–T8 done 2026-10-23. Frontier: **O1** (code merged 2c16afe; waits on the owner's keystore), then **T9**.
+**Status:** Wave 1 (v1, D1–D26) in progress. T0–T6 done 2026-10-22, T7–T8 done 2026-10-23. O1 done 2026-10-23. Frontier: **T9**.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -276,7 +276,7 @@ Accept:
 Non-goals: no widget actions (D19), no second widget (D2), no configuration activity, no
 separate widget cache.
 
-### O1 — Release signing — *added 2026-10-22*
+### O1 — Release signing — *added 2026-10-22* — **DONE 2026-10-23** (2c16afe)
 Files: `app/build.gradle.kts`, `CLAUDE.md` (Release section), `.gitignore`.
 
 `release` signing config per SPEC §8 (D5): reads `PD_STORE_FILE`, `PD_STORE_PASSWORD`,

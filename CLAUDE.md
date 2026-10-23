@@ -5,8 +5,7 @@
 **v1 in progress.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
-T4 done: theme, dashboard shell, Habits. O1 code merged (2c16afe); its Accept waits on the owner creating the release
-keystore (see Release). T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). Frontier: **O1**'s owner keystore, then **T9** (owner pass). `.claude/` ported from Quickmate 2026-10-14. No `DESIGN.md` (T9) yet.
+T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). Frontier: **T9** (owner pass); `DESIGN.md` written (bef9797), F2 open. `.claude/` ported from Quickmate 2026-10-14.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -37,8 +36,8 @@ The Quickmate document set, one job each. Create each when its first content exi
 - **`PLAN-V<n>.md` — *how a large wave gets built*.** Seams (file:line), stages, lanes, owner
   gates. Self-contained; a fresh session executes it top to bottom without re-deriving seams.
 - **`DESIGN.md` — *how it looks*.** Written by the impeccable documenter from the shipped UI,
-  not ahead of it. Compose theme tokens are the source; the doc describes them. *Not yet written.*
-  Until then, the approved T3 comps are the visual authority: `design/t3/comps.html` (D23).
+  not ahead of it. Compose theme tokens are the source; the doc describes them. Written 2026-10-23
+  (T9); it supersedes the T3 comps (`design/t3/comps.html`, D23) and lists where code and comp differ.
 - **`PRODUCT.md` — *who it is for*.** Users, positioning, hard UI constraints, voice (en-GB),
   accessibility bar. Read before touching copy. Impeccable's `init` writes it.
 - **`FEEDBACK.md` — *what was asked*.** Append-only inbox, `F<n>` items with a status line.
@@ -133,7 +132,7 @@ Signed release APK, shared directly (D5, SPEC §8, O1). Not minified (A6). Nothi
 in the repo; `.gitignore` already excludes `*.jks` and `*.keystore`.
 
 - **Keystore location:** `~/.android-keys/personalDashboard-release.jks`, outside the repo
-  (*to be confirmed by owner*). Alias `pd`. The owner creates it once, with the Studio JBR's
+  (created by the owner 2026-10-23). Alias `pd`. The owner creates it once, with the Studio JBR's
   `keytool`:
   `"$JAVA_HOME/bin/keytool" -genkeypair -v -keystore ~/.android-keys/personalDashboard-release.jks -alias pd -keyalg RSA -keysize 4096 -validity 36500`
 - **Properties** go in `~/.gradle/gradle.properties` (never the project's `gradle.properties`):
@@ -143,17 +142,20 @@ in the repo; `.gitignore` already excludes `*.jks` and `*.keystore`.
   PD_KEY_ALIAS=pd
   PD_KEY_PASSWORD=…
   ```
-  Use an absolute path for `PD_STORE_FILE` (`~` is not expanded). If any key is missing,
+  Use an absolute path for `PD_STORE_FILE` (`~` is not expanded). Values are bare (no quotes or
+  brackets). The keystore is PKCS12 (keytool's default), so `PD_KEY_PASSWORD` is the same as
+  `PD_STORE_PASSWORD`; a different value fails with "Given final block not properly padded". If any key is missing,
   `./gradlew assembleRelease` fails in `:app:checkReleaseSigning` naming the missing keys;
   `test`, `lint` and `assembleDebug` don't need them.
-- **Backup:** the keystore file and both passwords are stored together in the owner's password
+- **Backup:** the keystore file and its password are stored together in the owner's password
   manager and an offline backup. Every release must be signed with this same key. Losing it means
   every person has to uninstall and lose their data to take an update (D5).
 - **Version bump:** increment `versionCode` in `app/build.gradle.kts` on every APK that is shared,
   and set `versionName` to match the release (it is shown in About, SPEC §8).
 - **Verify** the signature before sharing. `apksigner` needs Java on `PATH`:
   `PATH="$JAVA_HOME/bin:$PATH" $ANDROID_HOME/build-tools/37.0.0/apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk`
-  — the `certificate DN` and SHA-256 digest must be the owner's cert, the same on every release.
+  — the `certificate DN` and SHA-256 digest must be the owner's cert, the same on every release:
+  `CN=Armaan Dhanoa`, SHA-256 `edb3df90b711ab2fd4b3e0ff1ae09b74ae7d4984942b071691aa747ea5a43fd7`.
 
 ## Impeccable
 
