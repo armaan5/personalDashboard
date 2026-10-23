@@ -13,6 +13,39 @@
     <string name="section_todos">To-dos</string>
     <string name="section_steps">Steps</string>
 
+    <string name="settings">Settings</string>
+
+    <!-- Calendar card (SPEC §5.2) -->
+    <string name="calendar_card_cd">Calendar, %1$s, %2$s</string>
+    <plurals name="calendar_cd_today">
+        <item quantity="one">%d event today</item>
+        <item quantity="other">%d events today</item>
+    </plurals>
+    <string name="calendar_cd_none_today">nothing else today</string>
+    <string name="calendar_cd_tomorrow">%1$d tomorrow</string>
+    <string name="calendar_cd_none_tomorrow">nothing tomorrow</string>
+    <string name="calendar_card_off_cd">Calendar, access is off</string>
+    <string name="calendar_off">Calendar access is off, so your events can\'t show here.</string>
+    <string name="calendar_off_settings">Calendar access is off, so turn it on in this app\'s settings.</string>
+    <string name="grant_access">Grant access</string>
+    <string name="calendar_nothing_today">Nothing else today.</string>
+    <string name="calendar_nothing_tomorrow">Nothing tomorrow.</string>
+    <string name="calendar_tomorrow">Tomorrow</string>
+    <string name="calendar_all_day">All day</string>
+    <string name="calendar_now">Now</string>
+    <string name="calendar_no_title">No title</string>
+    <string name="calendar_until">– %1$s</string>
+    <string name="calendar_event_cd">%1$s to %2$s, %3$s</string>
+    <string name="calendar_event_now_cd">Now, %1$s to %2$s, %3$s</string>
+    <string name="calendar_all_day_cd">All day, %1$s</string>
+
+    <!-- Settings (SPEC §6.1) -->
+    <string name="settings_calendars">Calendars</string>
+    <string name="settings_calendars_hint">Choose which calendars show on the dashboard</string>
+    <string name="calendars_title">Calendars</string>
+    <string name="calendars_off">Calendar access is off, so there are no calendars to choose from.</string>
+    <string name="calendars_none">No calendars on this phone. Add an account in the system settings and its calendars show here.</string>
+
     <!-- Habits card and screen (SPEC §4.2) -->
     <string name="habits_card_cd" tools:ignore="PluralsCandidate">Habits, %1$d of %2$d done</string>
     <string name="habits_card_none_cd">Habits, nothing scheduled today</string>

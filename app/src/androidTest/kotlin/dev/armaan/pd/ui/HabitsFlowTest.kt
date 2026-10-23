@@ -43,7 +43,11 @@ class HabitsFlowTest {
                 clock = Clock.fixed(Instant.parse("2026-10-21T12:00:00Z"), utc),
                 zoneOf = { utc },
                 inMemory = true,
+                // Calendar refused and already asked: no system dialog, and no reads of the
+                // device's own calendars.
+                calendarGranted = { false },
             )
+            runBlocking { app.container.settings.setAskedCalendar() }
         }
     }
 
@@ -112,13 +116,13 @@ class HabitsFlowTest {
         back()
 
         rule.onNodeWithContentDescription("Add habit").assertDoesNotExist()
-        rule.onNodeWithContentDescription("Calendar").assertExists()
+        rule.onNodeWithContentDescription("Calendar, access is off").assertExists()
     }
 
     @Test
     fun everyCardAndControl_hasAContentDescription() {
         seedStretch()
-        listOf("Calendar", "Habits, 0 of 1 done", "To-dos, nothing to do", "Steps").forEach {
+        listOf("Calendar, access is off", "Habits, 0 of 1 done", "To-dos, nothing to do", "Steps").forEach {
             rule.onNodeWithContentDescription(it).assertExists()
         }
         assertControlsLabelled()

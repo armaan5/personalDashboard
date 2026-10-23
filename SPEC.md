@@ -121,7 +121,7 @@ state recomputation uses the new zone. Stored dates are not rewritten.
 finishes), the current domain snapshot, the permission/source states from §5, and pending undo.
 Effects are data: `WriteHabit`, `DeleteHabit`, `RestoreHabit(habit, completions)`,
 `ToggleCompletion(habit, date, done)`, `WriteTodo` (upsert by id), `DeleteTodos`,
-`RequestPermission(kind)`, `OpenAppSettings`, `OpenHealthConnectInstall`, `RefreshWidget`,
+`RequestPermission(kind)`, `OpenAppSettings`, `WriteCalendarIds(ids)`, `OpenHealthConnectInstall`, `RefreshWidget`,
 `ShowSnackbar(message, undo)`, `Finish`. Plumbing executes them, in list order. The reducer performs
 no I/O.
 
@@ -132,6 +132,12 @@ snackbar is dismissed. Undo of a to-do tick reopens the current row, keeping any
 meanwhile. Opening Dashboard resets the back stack to `[Dashboard]`. `ToggleCompletion` carries the target `done` value rather than flipping, so
 replaying it is harmless. `RestoreHabit` re-inserts a deleted habit with its old id and
 completions. `RequestPermission` … `RefreshWidget` arrive with T6–T8.
+
+*Amended 2026-10-22 (T6, D24):* plumbing delivers `SettingsLoaded`, `CalendarChecked(granted,
+rationale)`, `CalendarLoaded(instances)` and `CalendarsListed(calendars)` as snapshots; the UI sends
+`CalendarShown`, `GrantCalendar` and `ToggleCalendar(id, on)`. `RequestPermission(Calendar)` makes
+plumbing set `asked_calendar`, then show the system dialog. `WriteCalendarIds` writes
+`calendar_ids`.
 
 ## 5. Sources
 
@@ -148,6 +154,11 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   false` after a denial). **Grant** then opens the app's system settings page
   (`ACTION_APPLICATION_DETAILS_SETTINGS`).
 - Permission state is re-read on every foreground (`ON_RESUME`).
+- *Amended 2026-10-22 (T6, D24):* the state is unknown, and nothing is requested, until both the
+  system check and the `asked_*` flag have been read. While a request's dialog is up, the state
+  reads `Denied`, not `PermanentlyDenied`, until the next check. `NotAsked` and `Denied` show the
+  reason line; `PermanentlyDenied` says to turn it on in the app's settings. The button reads
+  **Grant access** in every blocked state (T3 comps).
 
 ### 5.2 Calendar (D17)
 
@@ -169,6 +180,19 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   `calendar_ids` explicitly.
 - **States:** permission states (§5.1) · `Empty` ("Nothing else today" / "Nothing tomorrow",
   per section) · `Events`.
+- *Amended 2026-10-22 (T6, D24):*
+  - The query window is padded by a day on each side; the pure agenda drops rows outside today
+    and tomorrow. The provider is observed for changes only while access is granted, and the
+    agenda is re-read on change, at midnight, and when `calendar_ids` changes. "Now" and hiding
+    ended events follow a clock that ticks each minute while the app is in the foreground.
+  - Layout (D23): today's all-day strip as washed bars; today's first timed event set large with
+    its end time and a **Now** stamp when in progress; the rest as time + title rows. Each timed
+    event carries a duration rule (two hours = full width, capped), with an ink tick marking now
+    on the event in progress. Then **Tomorrow**. A section is `Empty` only when it has no all-day
+    and no timed events. A blank title reads "No title".
+  - TalkBack: the card reads "Calendar, N events today, M tomorrow" (or "nothing else today" /
+    "nothing tomorrow"), or "Calendar, access is off". Each event row reads "HH:mm to HH:mm,
+    Title", prefixed "Now," when in progress; all-day rows read "All day, Title".
 
 ### 5.3 Steps (D6, D16)
 
@@ -206,7 +230,10 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   - **Habits:** today's scheduled habits with tick and streak, then "Not today". Add/edit sheet
     with name and weekday chips. Delete from the edit sheet.
   - **To-dos:** §4.3, an add/edit sheet with title and an optional date (Material date picker).
-  - **Settings:** Calendars, Step goal, About.
+  - **Settings:** Calendars, Step goal, About. Opened from the masthead's settings icon and from
+    the Calendar (and Steps) card head. **Calendars** is pushed over it as its own back-stack
+    screen (*amended 2026-10-22*, T6, D24). Without calendar access it shows the reason and
+    **Grant access**; with no calendars on the device it says so.
 - The look comes from the T3 direction and the Compose theme tokens it produces. `DESIGN.md`
   describes the shipped theme afterwards.
 - PRD A1 bar: light/dark following the system, WCAG 2.2 AA contrast, 48 dp targets, TalkBack

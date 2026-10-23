@@ -2,6 +2,9 @@
 <!-- On-device only: no network permission (D3). No backup (D9). -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Read-only calendar (D17, D21): no write permission. -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
     <application
         android:name=".PdApplication"
         android:allowBackup="false"

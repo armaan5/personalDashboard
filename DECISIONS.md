@@ -38,6 +38,27 @@ for events. Dependency allowlist: `PRD.md` A3.
 
 ## Log
 
+### 2026-10-22 — D24: calendar permission details and test seam (T6)
+
+**Owner ask.** T6 seam round (`/tdd`). Revoking a runtime permission kills the process under
+test, so the Accept's "permission revoked" case can't be driven for real.
+
+**Decided.**
+- `AppContainer` takes an optional `calendarGranted: () -> Boolean` (default: the real
+  `checkSelfPermission`). Instrumented tests fake the blocked state through it; the granted case
+  grants `READ_CALENDAR` for real and inserts events through `CalendarContract` under the shell's
+  identity (`adoptShellPermissionIdentity`), so the app never declares `WRITE_CALENDAR` (D21).
+- While the system dialog is up, `asked_calendar` is already set but nothing is answered, so the
+  state reads `Denied`, not `PermanentlyDenied`, until the next check (seen on device: the card
+  showed the permanent-deny copy behind the dialog).
+- The calendar provider is observed only while access is granted: registering the observer
+  without `READ_CALENDAR` throws (seen on device as a first-launch crash).
+- The `Instances` query window is padded a day either side; `:core` drops what falls outside
+  today and tomorrow, so all-day rows never depend on the provider's zone handling.
+- Settings → Calendars is its own back-stack screen (`Screen.Calendars`) under Settings (PRD A4).
+
+**SPEC patches.** §4.4, §5.1, §5.2, §6.1 (*amended 2026-10-22*, T6).
+
 ### 2026-10-22 — D23: visual direction "The Wall Planner" (T3)
 
 **Owner ask.** T3 design gate (D12). Impeccable native/Android round, seed `b0779a3e`, Operate

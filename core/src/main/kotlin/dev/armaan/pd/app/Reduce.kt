@@ -1,5 +1,6 @@
 package dev.armaan.pd.app
 
+import dev.armaan.pd.calendar.shownCalendars
 import dev.armaan.pd.habit.Habit
 import dev.armaan.pd.habit.cleanHabitName
 import dev.armaan.pd.habit.isScheduledOn
@@ -40,6 +41,15 @@ fun reduce(state: State, event: Event, now: Instant, zone: ZoneId): Next {
 
         Event.Undo -> undo(state)
         Event.SnackbarDismissed -> Next(state.copy(pendingUndo = null))
+
+        is Event.SettingsLoaded -> Next(state.copy(settings = event.settings))
+        is Event.CalendarChecked -> Next(state.copy(calendarCheck = event.check, calendarRequesting = false))
+        is Event.CalendarLoaded -> Next(state.copy(calendarInstances = event.instances))
+        is Event.CalendarsListed -> Next(state.copy(calendars = event.calendars))
+        Event.CalendarShown ->
+            if (state.calendarAccess == Access.NotAsked) requestCalendar(state) else Next(state)
+        Event.GrantCalendar -> grantCalendar(state)
+        is Event.ToggleCalendar -> toggleCalendar(state, event)
     }
 }
 
@@ -120,6 +130,24 @@ private fun undo(state: State): Next {
         is Undo.HistoryCleared -> pending.todos.map { Effect.WriteTodo(it) }
     }
     return Next(state.copy(pendingUndo = null), effects)
+}
+
+/** SPEC §5.1: Grant asks again while the system will still ask, then opens the app's settings. */
+private fun grantCalendar(state: State): Next = when (state.calendarAccess) {
+    Access.NotAsked, Access.Denied -> requestCalendar(state)
+    Access.PermanentlyDenied -> Next(state, listOf(Effect.OpenAppSettings))
+    Access.Granted, null -> Next(state)
+}
+
+private fun requestCalendar(state: State) =
+    Next(state.copy(calendarRequesting = true), listOf(Effect.RequestPermission(PermissionKind.Calendar)))
+
+/** SPEC §5.2: the first toggle writes `calendar_ids` explicitly, starting from the default. */
+private fun toggleCalendar(state: State, event: Event.ToggleCalendar): Next {
+    val settings = state.settings ?: return Next(state)
+    val shown = shownCalendars(state.calendars, settings.calendarIds)
+    val ids = if (event.on) shown + event.calendarId else shown - event.calendarId
+    return Next(state, listOf(Effect.WriteCalendarIds(ids)))
 }
 
 private fun State.habit(id: Long): Habit? = habits.find { it.id == id }

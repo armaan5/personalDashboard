@@ -23,10 +23,21 @@ sealed interface Effect {
 
     data class DeleteTodos(val ids: List<Long>) : Effect
 
+    /** Plumbing sets the matching `asked_*` flag, then shows the system request (SPEC §5.1). */
+    data class RequestPermission(val kind: PermissionKind) : Effect
+
+    /** The app's system settings page, `ACTION_APPLICATION_DETAILS_SETTINGS`. */
+    data object OpenAppSettings : Effect
+
+    /** Writes `calendar_ids` explicitly (SPEC §3.2). */
+    data class WriteCalendarIds(val ids: Set<String>) : Effect
+
     data class ShowSnackbar(val message: Message, val undo: Boolean) : Effect
 
     data object Finish : Effect
 }
+
+enum class PermissionKind { Calendar }
 
 /** Snackbar copy keys. The text lives in `strings.xml`. */
 sealed interface Message {

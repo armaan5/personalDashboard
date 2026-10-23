@@ -1,5 +1,7 @@
 package dev.armaan.pd.app
 
+import dev.armaan.pd.calendar.DeviceCalendar
+import dev.armaan.pd.calendar.Instance
 import dev.armaan.pd.habit.Habit
 import dev.armaan.pd.todo.Todo
 import java.time.DayOfWeek
@@ -31,4 +33,19 @@ sealed interface Event {
     data object Undo : Event
 
     data object SnackbarDismissed : Event
+
+    data class SettingsLoaded(val settings: Settings) : Event
+
+    data class CalendarChecked(val check: PermissionCheck) : Event
+
+    data class CalendarLoaded(val instances: List<Instance>) : Event
+
+    data class CalendarsListed(val calendars: List<DeviceCalendar>) : Event
+
+    /** The Calendar card was composed on screen (SPEC §5.1: the first view requests). */
+    data object CalendarShown : Event
+
+    data object GrantCalendar : Event
+
+    data class ToggleCalendar(val calendarId: String, val on: Boolean) : Event
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +27,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -356,4 +360,26 @@ fun EmptyLine(text: String, modifier: Modifier = Modifier) {
         color = Pd.colors.ink,
         modifier = modifier.padding(top = 4.dp, bottom = 8.dp).widthIn(max = 340.dp),
     )
+}
+
+/** A blocked source's line, then its ink Grant action (SPEC §5.1, D7). */
+@Composable
+fun Blocked(text: String, action: String, onAction: () -> Unit) {
+    Column(Modifier.padding(top = 4.dp, bottom = 18.dp)) {
+        Text(
+            text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Pd.colors.ink,
+            // About 34 characters, as the comp's blocked line (D23).
+            modifier = Modifier.widthIn(max = 280.dp),
+        )
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = onAction,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Pd.colors.ink, contentColor = Pd.colors.onInk),
+            contentPadding = PaddingValues(horizontal = 22.dp),
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) { Text(action) }
+    }
 }

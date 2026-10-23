@@ -1,7 +1,13 @@
 package dev.armaan.pd.ui
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,11 +34,16 @@ import dev.armaan.pd.R
 import dev.armaan.pd.UiEffect
 import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.Message
+import dev.armaan.pd.app.PermissionKind
 import dev.armaan.pd.app.Screen
+import dev.armaan.pd.calendar.agenda
+import dev.armaan.pd.calendar.shownCalendars
 import dev.armaan.pd.habit.habitsToday
 import dev.armaan.pd.todo.buckets
 import dev.armaan.pd.ui.dashboard.DashboardScreen
 import dev.armaan.pd.ui.habits.HabitsScreen
+import dev.armaan.pd.ui.settings.CalendarsScreen
+import dev.armaan.pd.ui.settings.SettingsScreen
 import dev.armaan.pd.ui.todos.TodosScreen
 import kotlinx.coroutines.launch
 
@@ -41,6 +52,9 @@ import kotlinx.coroutines.launch
 fun MainScreen(vm: MainViewModel) {
     val state by vm.state.collectAsStateWithLifecycle()
     val today by vm.today.collectAsStateWithLifecycle()
+    val now by vm.now.collectAsStateWithLifecycle()
+    val zone = vm.zone()
+    val agenda = remember(state.calendarInstances, now, zone) { agenda(state.calendarInstances, now, zone) }
     val habits = remember(state.habits, state.completions, today) {
         habitsToday(state.habits, state.completions, today)
     }
@@ -52,9 +66,15 @@ fun MainScreen(vm: MainViewModel) {
     var addHabit by rememberSaveable { mutableStateOf(false) }
     var addTodo by rememberSaveable { mutableStateOf(false) }
 
+    // SPEC §5.1: once denied, the system only shows its dialog again while this is true.
+    val calendarRationale = { activity?.shouldShowRequestPermissionRationale(Manifest.permission.READ_CALENDAR) ?: false }
+    val requestCalendar = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        vm.checkCalendar(calendarRationale())
+    }
+
     LifecycleResumeEffect(Unit) {
-        vm.refreshDay()
-        onPauseOrDispose {}
+        vm.resume(calendarRationale())
+        onPauseOrDispose { vm.pause() }
     }
     BackHandler { vm.dispatch(Event.Back) }
 
@@ -64,6 +84,14 @@ fun MainScreen(vm: MainViewModel) {
         vm.uiEffects.collect { effect ->
             when (effect) {
                 UiEffect.Finish -> activity?.finish()
+                is UiEffect.RequestPermission -> when (effect.kind) {
+                    PermissionKind.Calendar -> requestCalendar.launch(Manifest.permission.READ_CALENDAR)
+                }
+                UiEffect.OpenAppSettings -> activity?.let {
+                    it.startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", it.packageName, null)),
+                    )
+                }
                 is UiEffect.Snackbar -> {
                     val id = ++shown
                     snackbar.currentSnackbarData?.dismiss()
@@ -106,10 +134,28 @@ fun MainScreen(vm: MainViewModel) {
             onSave = { id, title, due -> vm.dispatch(Event.SaveTodo(id, title, due)) },
             onClearHistory = { vm.dispatch(Event.ClearHistory) },
         )
-        // Settings arrives with T6; nothing opens it yet.
-        else -> Box(Modifier.fillMaxSize()) {
+        Screen.Settings -> SettingsScreen(
+            onBack = { vm.dispatch(Event.Back) },
+            onOpenCalendars = { vm.dispatch(Event.Open(Screen.Calendars)) },
+        )
+        Screen.Calendars -> CalendarsScreen(
+            access = state.calendarAccess,
+            calendars = state.calendars,
+            shown = shownCalendars(state.calendars, state.settings?.calendarIds),
+            onBack = { vm.dispatch(Event.Back) },
+            onGrant = { vm.dispatch(Event.GrantCalendar) },
+            onToggle = { id, on -> vm.dispatch(Event.ToggleCalendar(id, on)) },
+        )
+        Screen.Dashboard -> Box(Modifier.fillMaxSize()) {
             DashboardScreen(
                 today = today,
+                onOpenSettings = { vm.dispatch(Event.Open(Screen.Settings)) },
+                calendarAccess = state.calendarAccess,
+                agenda = agenda,
+                now = now,
+                zone = zone,
+                onCalendarShown = { vm.dispatch(Event.CalendarShown) },
+                onGrantCalendar = { vm.dispatch(Event.GrantCalendar) },
                 habits = habits,
                 anyHabits = state.habits.isNotEmpty(),
                 onOpenHabits = { vm.dispatch(Event.Open(Screen.Habits)) },

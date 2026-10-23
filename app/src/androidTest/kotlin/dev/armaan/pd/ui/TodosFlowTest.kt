@@ -39,7 +39,9 @@ class TodosFlowTest {
     private val inject = object : ExternalResource() {
         override fun before() {
             val utc = ZoneOffset.UTC
-            app.container = AppContainer(app, clock = Clock.fixed(now, utc), zoneOf = { utc }, inMemory = true)
+            // Calendar refused and already asked: no system dialog, and no reads of the device's own calendars.
+            app.container = AppContainer(app, clock = Clock.fixed(now, utc), zoneOf = { utc }, inMemory = true, calendarGranted = { false })
+            runBlocking { app.container.settings.setAskedCalendar() }
         }
     }
 

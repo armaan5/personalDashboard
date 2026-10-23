@@ -65,6 +65,19 @@ data class PdType(
     val due: TextStyle = condensed(FontWeight.SemiBold, 14, 16, 0.03),
     /** “OVERDUE”, heavy ink capitals beside the pennant (D23). */
     val overdue: TextStyle = condensed(FontWeight.Bold, 14, 16, 0.07),
+    /** Calendar: the next event's start, set large (D23). */
+    val nextTime: TextStyle = condensed(FontWeight.Bold, 38, 40),
+    val nextEnd: TextStyle = condensed(FontWeight.Medium, 17, 18),
+    val nextTitle: TextStyle = barlow(FontWeight.Medium, 20, 25),
+    /** The "Now" stamp on the event in progress. */
+    val stamp: TextStyle = condensed(FontWeight.Bold, 13, 14, 0.08),
+    val eventTime: TextStyle = condensed(FontWeight.SemiBold, 19, 22),
+    val eventTitle: TextStyle = barlow(FontWeight.Normal, 16, 21),
+    val allDay: TextStyle = barlow(FontWeight.Medium, 15, 19),
+    /** "ALL DAY" at the end of a washed bar. */
+    val allDayTag: TextStyle = condensed(FontWeight.SemiBold, 13, 16, 0.05),
+    /** A sub-head inside a section, e.g. “Tomorrow”. */
+    val sub: TextStyle = condensed(FontWeight.SemiBold, 14, 16, 0.07),
 )
 
 val PdTypography = Typography(

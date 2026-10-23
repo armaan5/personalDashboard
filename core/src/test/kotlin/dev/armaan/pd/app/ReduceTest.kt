@@ -1,5 +1,6 @@
 package dev.armaan.pd.app
 
+import dev.armaan.pd.calendar.DeviceCalendar
 import dev.armaan.pd.habit.Habit
 import dev.armaan.pd.todo.Todo
 import java.time.DayOfWeek
@@ -210,5 +211,82 @@ class ReduceTest {
         val out = run(Event.TodosLoaded(listOf(todo(9))), State())
         assertEquals(listOf(todo(9)), out.state.todos)
         assertEquals(emptyList(), out.effects)
+    }
+
+    // Calendar (SPEC §5.1, §5.2)
+
+    private val refused = PermissionCheck(granted = false, rationale = false)
+
+    private fun calendarState(check: PermissionCheck, asked: Boolean) =
+        State(settings = Settings(askedCalendar = asked), calendarCheck = check)
+
+    @Test
+    fun `calendar shown - in NotAsked requests the permission`() {
+        val out = run(Event.CalendarShown, calendarState(refused, asked = false))
+        assertEquals(listOf<Effect>(Effect.RequestPermission(PermissionKind.Calendar)), out.effects)
+    }
+
+    @Test
+    fun `calendar shown - requests nothing once asked, granted or still unknown`() {
+        assertEquals(emptyList(), run(Event.CalendarShown, calendarState(PermissionCheck(false, rationale = true), asked = true)).effects)
+        assertEquals(emptyList(), run(Event.CalendarShown, calendarState(refused, asked = true)).effects)
+        assertEquals(emptyList(), run(Event.CalendarShown, calendarState(PermissionCheck(true, false), asked = false)).effects)
+        assertEquals(emptyList(), run(Event.CalendarShown, State(calendarCheck = refused)).effects)
+    }
+
+    @Test
+    fun `calendar request in flight - reads Denied, not PermanentlyDenied, until the next check`() {
+        // Plumbing sets asked_calendar as the dialog opens, before the user answers.
+        val asking = run(Event.CalendarShown, calendarState(refused, asked = false)).state
+        val flagged = run(Event.SettingsLoaded(Settings(askedCalendar = true)), asking).state
+        assertEquals(Access.Denied, flagged.calendarAccess)
+        assertEquals(Access.PermanentlyDenied, run(Event.CalendarChecked(refused), flagged).state.calendarAccess)
+    }
+
+    @Test
+    fun `grant calendar - when Denied requests again`() {
+        val out = run(Event.GrantCalendar, calendarState(PermissionCheck(false, rationale = true), asked = true))
+        assertEquals(listOf<Effect>(Effect.RequestPermission(PermissionKind.Calendar)), out.effects)
+    }
+
+    @Test
+    fun `grant calendar - when PermanentlyDenied opens the app settings page`() {
+        val out = run(Event.GrantCalendar, calendarState(refused, asked = true))
+        assertEquals(listOf<Effect>(Effect.OpenAppSettings), out.effects)
+    }
+
+    private val personal = DeviceCalendar("1", "Personal", "me@example.com", 0, visible = true)
+    private val work = DeviceCalendar("2", "Work", "me@example.com", 0, visible = true)
+    private val holidays = DeviceCalendar("3", "Holidays", "me@example.com", 0, visible = false)
+
+    private fun calendarsState(stored: Set<String>?) =
+        State(settings = Settings(calendarIds = stored), calendars = listOf(personal, work, holidays))
+
+    @Test
+    fun `toggle calendar - the first toggle writes the visible default explicitly`() {
+        assertEquals(
+            listOf<Effect>(Effect.WriteCalendarIds(setOf("1", "2", "3"))),
+            run(Event.ToggleCalendar("3", on = true), calendarsState(stored = null)).effects,
+        )
+        assertEquals(
+            listOf<Effect>(Effect.WriteCalendarIds(setOf("2"))),
+            run(Event.ToggleCalendar("1", on = false), calendarsState(stored = null)).effects,
+        )
+    }
+
+    @Test
+    fun `toggle calendar - later toggles edit the stored set`() {
+        assertEquals(
+            listOf<Effect>(Effect.WriteCalendarIds(setOf("3"))),
+            run(Event.ToggleCalendar("3", on = true), calendarsState(stored = emptySet())).effects,
+        )
+    }
+
+    @Test
+    fun `open - Calendars is pushed over Settings and Back returns to Settings`() {
+        val settings = run(Event.Open(Screen.Settings), State()).state
+        val calendars = run(Event.Open(Screen.Calendars), settings).state
+        assertEquals(listOf(Screen.Dashboard, Screen.Settings, Screen.Calendars), calendars.backStack)
+        assertEquals(listOf(Screen.Dashboard, Screen.Settings), run(Event.Back, calendars).state.backStack)
     }
 }
