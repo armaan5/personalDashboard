@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D23) in progress. T0–T6 done 2026-10-22. Frontier: **T7**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
+**Status:** Wave 1 (v1, D1–D25) in progress. T0–T6 done 2026-10-22, T7 done 2026-10-23. Frontier: **T8**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -212,7 +212,7 @@ Accept:
 Non-goals: no event editing or detail screen (D21), no days beyond tomorrow, no colour-coding
 beyond the Settings swatch unless the comps ask for it.
 
-### T7 — Steps and Health Connect — **high-care** — *added 2026-10-22*
+### T7 — Steps and Health Connect — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (c663e2a)
 Files: `core/…/steps/Steps.kt`, `core/test/…/steps/StepsTest.kt`, `core/…/app/*`,
 `app/…/source/StepsReader.kt`, `app/…/data/Settings.kt`, `app/…/ui/dashboard/StepsCard.kt`,
 `app/…/ui/settings/SettingsScreen.kt`, `app/…/ui/settings/AboutScreen.kt`,
