@@ -4,6 +4,13 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Release signing (SPEC §8, D5). The four PD_* keys live in ~/.gradle/gradle.properties, never in
+// the repo. When any is missing the signing config is not attached, and release packaging fails
+// with checkReleaseSigning instead, so test / lint / assembleDebug still work without them.
+val releaseSigningKeys = listOf("PD_STORE_FILE", "PD_STORE_PASSWORD", "PD_KEY_ALIAS", "PD_KEY_PASSWORD")
+val releaseSigning = releaseSigningKeys.associateWith { providers.gradleProperty(it).orNull?.takeIf(String::isNotBlank) }
+val missingReleaseSigningKeys = releaseSigning.filterValues { it == null }.keys.toList()
+
 android {
     namespace = "dev.armaan.pd"
     compileSdk = 37
@@ -19,9 +26,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (missingReleaseSigningKeys.isEmpty()) {
+            create("release") {
+                storeFile = file(releaseSigning.getValue("PD_STORE_FILE")!!)
+                storePassword = releaseSigning.getValue("PD_STORE_PASSWORD")
+                keyAlias = releaseSigning.getValue("PD_KEY_ALIAS")
+                keyPassword = releaseSigning.getValue("PD_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (missingReleaseSigningKeys.isEmpty()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -32,6 +53,27 @@ android {
 
     buildFeatures {
         compose = true
+    }
+}
+
+val checkReleaseSigning = tasks.register("checkReleaseSigning") {
+    group = "verification"
+    description = "Fails when any PD_* release signing property is missing."
+    val missing = missingReleaseSigningKeys
+    doLast {
+        if (missing.isNotEmpty()) {
+            throw GradleException(
+                "Release signing is not configured. Missing Gradle properties: " +
+                    missing.joinToString(", ") +
+                    ". Set them in ~/.gradle/gradle.properties (see CLAUDE.md, Release).",
+            )
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name == "packageRelease" || name == "bundleRelease" || name == "assembleRelease") {
+        dependsOn(checkReleaseSigning)
     }
 }
 

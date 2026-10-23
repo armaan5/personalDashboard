@@ -127,6 +127,34 @@ Accept check also confirms the count:
 `grep -o 'tests="[0-9]*"' app/build/outputs/androidTest-results/connected/debug/*.xml` must be
 non-zero and include the named test class.
 
+## Release
+
+Signed release APK, shared directly (D5, SPEC §8, O1). Not minified (A6). Nothing secret lives
+in the repo; `.gitignore` already excludes `*.jks` and `*.keystore`.
+
+- **Keystore location:** `~/.android-keys/personalDashboard-release.jks`, outside the repo
+  (*to be confirmed by owner*). Alias `pd`. The owner creates it once, with the Studio JBR's
+  `keytool`:
+  `"$JAVA_HOME/bin/keytool" -genkeypair -v -keystore ~/.android-keys/personalDashboard-release.jks -alias pd -keyalg RSA -keysize 4096 -validity 36500`
+- **Properties** go in `~/.gradle/gradle.properties` (never the project's `gradle.properties`):
+  ```
+  PD_STORE_FILE=/Users/<you>/.android-keys/personalDashboard-release.jks
+  PD_STORE_PASSWORD=…
+  PD_KEY_ALIAS=pd
+  PD_KEY_PASSWORD=…
+  ```
+  Use an absolute path for `PD_STORE_FILE` (`~` is not expanded). If any key is missing,
+  `./gradlew assembleRelease` fails in `:app:checkReleaseSigning` naming the missing keys;
+  `test`, `lint` and `assembleDebug` don't need them.
+- **Backup:** the keystore file and both passwords are stored together in the owner's password
+  manager and an offline backup. Every release must be signed with this same key. Losing it means
+  every person has to uninstall and lose their data to take an update (D5).
+- **Version bump:** increment `versionCode` in `app/build.gradle.kts` on every APK that is shared,
+  and set `versionName` to match the release (it is shown in About, SPEC §8).
+- **Verify** the signature before sharing. `apksigner` needs Java on `PATH`:
+  `PATH="$JAVA_HOME/bin:$PATH" $ANDROID_HOME/build-tools/37.0.0/apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk`
+  — the `certificate DN` and SHA-256 digest must be the owner's cert, the same on every release.
+
 ## Impeccable
 
 Ported as-is from Quickmate (it is a third-party skill; do not edit its files). Use its native
