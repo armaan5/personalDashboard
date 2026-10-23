@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D26) in progress. T0–T6 done 2026-10-22, T7–T8 done 2026-10-23. O1 done 2026-10-23. Frontier: **T9**.
+**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Open feedback: F2, F3.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -295,7 +295,12 @@ Accept:
 
 Non-goals: no Play App Signing, no CI signing, no Firebase (D5).
 
-### T9 — Verification chain and owner manual pass — **OWNER gate** — *added 2026-10-22*
+### T9 — Verification chain and owner manual pass — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-23** (bef9797)
+*Result:* the full chain exits 0 (22 instrumented tests). On API 30, `NeedsInstall` opens Health
+Connect's Play listing. The owner passed PRD §8 on a Galaxy S25 (API 37), except: step 1 shows the
+calendar dialog (F2); step 5 was seen only as `NoData`, because Samsung Health had written no
+steps; the Sat → Mon streak and the midnight rollover are covered by tests only. Owner also filed
+F3 (status-bar overlap). The owner closed the ticket with these gaps noted.
 Files: `BACKLOG.md`, `FEEDBACK.md`, `CLAUDE.md` (Status), `DESIGN.md` (via impeccable
 documenter), `.impeccable/design.json` sidecar if the documenter emits it.
 

@@ -2,10 +2,10 @@
 
 ## Status
 
-**v1 in progress.** 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
+**v1 shipped 2026-10-23** (Wave 1 closed; v0.1.0, `versionCode` 1, signed release on the owner's Galaxy S25). 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
-T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). Frontier: **T9** (owner pass); `DESIGN.md` written (bef9797), F2 open. `.claude/` ported from Quickmate 2026-10-14.
+T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1), **F3** (status-bar overlap); next is `/feedback` on them. `.claude/` ported from Quickmate 2026-10-14.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -167,10 +167,12 @@ local state and gitignored.
 
 ## Still open
 
-- Nothing beyond the BACKLOG frontier. (T3 closed visual direction and card order, D23.)
-- For the T9 owner pass (found in T7's finish review, predate T7): the dashboard scrolls under the
-  status bar with no scrim (edge-to-edge); at 200 % font a Calendar row's time wraps ("09:" / "00").
-- For T9, from T8's finish review: the widget picker shows Glance's loading layout, not a preview
-  (no `previewImage` / `previewLayout`); at 200 % font a 2×2 widget ellipsises every line
-  ("13:00 L…"), readable once resized; dark and light checked on `pd_api37` only, not on 28–30.
+- `FEEDBACK.md` F2 and F3, waiting for `/feedback`.
+- Not seen on device in T9 (covered by tests): step 5's ring and goal change (Samsung Health had
+  written no steps to Health Connect yet, so the card sat in `NoData`), the Sat → Mon habit
+  streak, and the midnight to-do rollover.
+- Known gaps in `DESIGN.md` not yet raised as F-items: at 200 % font a Calendar row's time wraps
+  ("09:" / "00") and a 2×2 widget ellipsises every line; the widget picker shows Glance's loading
+  layout (no `previewImage` / `previewLayout`); `surfaceTint` is left at Material's default
+  purple (`Theme.kt:39`), visual effect unchecked. Widget light/dark checked on API 37 only.
   Anyone who granted steps before T8 isn't asked for background access (D26).
