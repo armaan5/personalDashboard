@@ -3,9 +3,11 @@ package dev.armaan.pd.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,9 @@ import dev.armaan.pd.MainActivity
 import dev.armaan.pd.PdApplication
 import dev.armaan.pd.R
 import dev.armaan.pd.app.PermissionCheck
+import dev.armaan.pd.app.WidgetScheme
 import dev.armaan.pd.app.access
+import dev.armaan.pd.app.widgetScheme
 import dev.armaan.pd.calendar.queryWindow
 import dev.armaan.pd.steps.lastSevenDays
 import dev.armaan.pd.steps.stepsCard
@@ -78,7 +82,7 @@ class DashboardWidget : GlanceAppWidget() {
         provideContent {
             // A live session only recomposes on update, so later refreshes re-read the sources here.
             val drawn by remember { refreshes.dropWhile { it == seen }.map { container.drawn() } }.collectAsState(first)
-            Content(drawn.summary, drawn.zone)
+            CompositionLocalProvider(LocalPalette provides Palette(drawn.scheme)) { Content(drawn.summary, drawn.zone) }
         }
     }
 
@@ -94,9 +98,9 @@ class DashboardWidget : GlanceAppWidget() {
     }
 }
 
-private class Drawn(val summary: Summary, val zone: ZoneId)
+private class Drawn(val summary: Summary, val zone: ZoneId, val scheme: WidgetScheme)
 
-private suspend fun AppContainer.drawn() = Drawn(summary(), zone())
+private suspend fun AppContainer.drawn() = Drawn(summary(), zone(), widgetScheme(settings.settings.first().theme))
 
 /** Plumbing: reads each source once and hands the snapshots to [summary]. */
 private suspend fun AppContainer.summary(): Summary {
@@ -120,14 +124,35 @@ private suspend fun AppContainer.summary(): Summary {
     return summary(now, zone, calendarOn, instances, card, settings.stepGoal, habits.habits, habits.completions)
 }
 
-private fun provider(pick: PdColors.() -> Color) = ColorProvider(day = LightColors.pick(), night = DarkColors.pick())
+/** The widget's colours: Settings → Theme forces one scheme, or System keeps day/night (D27 d). */
+private class Palette(private val scheme: WidgetScheme) {
+    private fun provider(pick: PdColors.() -> Color) = when (scheme) {
+        WidgetScheme.Light -> ColorProvider(LightColors.pick())
+        WidgetScheme.Dark -> ColorProvider(DarkColors.pick())
+        WidgetScheme.DayNight -> ColorProvider(day = LightColors.pick(), night = DarkColors.pick())
+    }
 
-private val Ink = provider { ink }
-private val Ink2 = provider { ink2 }
-private val Rule = provider { rule }
-private val CalendarDot = provider { calendar }
-private val StepsDot = provider { steps }
-private val HabitsDot = provider { habits }
+    val stock = when (scheme) {
+        WidgetScheme.Light -> R.drawable.widget_stock_light
+        WidgetScheme.Dark -> R.drawable.widget_stock_dark
+        WidgetScheme.DayNight -> R.drawable.widget_stock
+    }
+    val ink = provider { ink }
+    val ink2 = provider { ink2 }
+    val rule = provider { rule }
+    val calendar = provider { calendar }
+    val steps = provider { steps }
+    val habits = provider { habits }
+}
+
+private val LocalPalette = staticCompositionLocalOf { Palette(WidgetScheme.DayNight) }
+
+private val Ink @Composable get() = LocalPalette.current.ink
+private val Ink2 @Composable get() = LocalPalette.current.ink2
+private val Rule @Composable get() = LocalPalette.current.rule
+private val CalendarDot @Composable get() = LocalPalette.current.calendar
+private val StepsDot @Composable get() = LocalPalette.current.steps
+private val HabitsDot @Composable get() = LocalPalette.current.habits
 
 /** RemoteViews can't load the app's Barlow; the system condensed face stands in. */
 private val Condensed = FontFamily("sans-serif-condensed")
@@ -145,7 +170,7 @@ private fun Content(summary: Summary, zone: ZoneId) {
         GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
-            .background(ImageProvider(R.drawable.widget_stock))
+            .background(ImageProvider(LocalPalette.current.stock))
             .padding(start = 14.dp, top = 12.dp, end = 12.dp, bottom = 10.dp)
             .clickable(actionStartActivity(open)),
     ) {

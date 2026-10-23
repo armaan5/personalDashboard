@@ -328,6 +328,9 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   - The system condensed face stands in for Barlow, which RemoteViews can't load.
   - TalkBack reads each line: "Next event, 10:30 Design review", "Steps, 6,240 of 8,000 today",
     "Habits, 2 of 3 done", or "Calendar, open to set up".
+- *Amended 2026-10-23 (U3, D27 d):* colours follow Settings → Theme: Light or Dark forces that
+  palette, card included, whatever the phone's mode; System keeps the day/night pair. Changing
+  the setting refreshes the widget.
 
 ## 7. Copy
 

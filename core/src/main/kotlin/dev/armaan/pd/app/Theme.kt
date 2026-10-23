@@ -9,3 +9,12 @@ fun isDark(choice: ThemeChoice, systemDark: Boolean): Boolean = when (choice) {
     ThemeChoice.Light -> false
     ThemeChoice.Dark -> true
 }
+
+/** The widget's palette (D27 d): forced by a Light or Dark choice, day/night on System. */
+enum class WidgetScheme { Light, Dark, DayNight }
+
+fun widgetScheme(choice: ThemeChoice): WidgetScheme = when (choice) {
+    ThemeChoice.System -> WidgetScheme.DayNight
+    ThemeChoice.Light -> WidgetScheme.Light
+    ThemeChoice.Dark -> WidgetScheme.Dark
+}

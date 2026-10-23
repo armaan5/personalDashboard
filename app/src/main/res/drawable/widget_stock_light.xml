@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widget's card when Settings → Theme forces Light (D27 d). Mirrors LightColors.stock (Color.kt). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#F7F9F8" />
+    <corners android:radius="22dp" />
+</shape>

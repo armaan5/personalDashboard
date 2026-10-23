@@ -5,7 +5,7 @@ import java.time.ZoneId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** D27 c, SPEC §3.2, §4.4. */
+/** D27 c, d, SPEC §3.2, §4.4, §6.2. */
 class ThemeTest {
     private val now = Instant.parse("2026-10-23T10:00:00Z")
     private val zone = ZoneId.of("Europe/London")
@@ -29,5 +29,12 @@ class ThemeTest {
     @Test
     fun defaultSettingsThemeIsSystem() {
         assertEquals(ThemeChoice.System, Settings().theme)
+    }
+
+    @Test
+    fun widgetSchemeMatchesChoice() {
+        assertEquals(WidgetScheme.DayNight, widgetScheme(ThemeChoice.System))
+        assertEquals(WidgetScheme.Light, widgetScheme(ThemeChoice.Light))
+        assertEquals(WidgetScheme.Dark, widgetScheme(ThemeChoice.Dark))
     }
 }
