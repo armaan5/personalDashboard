@@ -39,4 +39,9 @@ scrolled, so the date head and section content scroll under the clock and icons.
 in T7's finish review (`CLAUDE.md` "Still open") and `DESIGN.md` Known Gaps; also seen on
 `pd_api30` in T9. Owner asked to file it for now, not fix it.
 
-Status: open
+Status: triaged 2026-10-23 → D27 (Wave 2 U1, U4)
+
+## F4 — 2026-10-23 — owner (chat)
+> add dark mode theme option in settings
+
+Status: triaged 2026-10-23 → D27 (Wave 2 U2–U4)

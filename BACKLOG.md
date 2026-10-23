@@ -1,8 +1,8 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Open feedback: F2, F3.
+**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Wave 2 (D27: status-bar band, theme setting) added 2026-10-23, U1–U4. Frontier: **U1**, **U2** (parallel). Open feedback: F2.
 
-**Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
+**Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. Wave 2: (U1 ∥ U2) → U3 → U4. T3 runs beside
 T0–T2. O1 runs any time after T0.
 
 Ticket format: `.claude/skills/to-tickets/SKILL.md`. DONE line: `— **DONE YYYY-MM-DD** (<hash>)`.
@@ -319,3 +319,112 @@ Accept:
 
 Non-goals: fixing anything found here inside this ticket. Each finding becomes an F-item and a
 new ticket.
+
+---
+
+## Wave 2 — Status-bar band and theme setting — *added 2026-10-23, see `DECISIONS.md` "D27"*
+
+U1 (F3) and U2 (F4) touch different files and run in parallel worktrees. U3 follows U2 because it
+reads U2's setting. U3 is the wave's last code ticket and runs the full chain. U4 is the owner
+pass on the S25. No new dependency.
+
+### U1 — Status-bar band on the Dashboard (F3) — *added 2026-10-23*
+Files: `app/…/ui/dashboard/DashboardScreen.kt`, `app/androidTest/…/ui/DashboardInsetsTest.kt` (new),
+`SPEC.md` §6.1.
+
+Scrolling the Dashboard no longer puts rows under the clock and status icons (D27 a). The list
+is clipped at the bottom of the status-bar inset, and the inset itself is a solid band in
+`Pd.colors.stock`, in both schemes. At rest the masthead sits where it does now. The other screens
+keep their fixed `TopBar`. SPEC §6.1 *amended*: "Edge-to-edge; on the Dashboard the status-bar
+inset is a solid stock band and the list is clipped below it."
+
+Blocked by: none — can start now.
+
+Accept:
+- `./gradlew connectedAndroidTest` on `pd_api37` passes `DashboardInsetsTest`:
+  - `scrolledRowsStayBelowTheStatusBar`: after scrolling to the Steps card, no visible list
+    node's clipped top is above the status-bar inset.
+  - `bandFillsTheInsetInStock`: a pixel inside the inset is `Pd.colors.stock`.
+- The count check (`CLAUDE.md`) includes `DashboardInsetsTest`.
+
+Non-goals: no gradient or fading scrim (D27 g). No change to the `TopBar` screens or the
+navigation-bar inset. No collapsing masthead.
+
+### U2 — Theme setting: System / Light / Dark (F4) — *added 2026-10-23*
+Files: `core/…/app/{Settings,Event,Effect,Reduce}.kt`, `core/…/app/Theme.kt` (new),
+`core/test/…/app/ThemeTest.kt` (new), `app/…/data/Settings.kt`, `app/…/MainViewModel.kt`,
+`app/…/MainActivity.kt`, `app/…/PrivacyRationaleActivity.kt`, `app/…/ui/theme/Theme.kt`,
+`app/…/ui/MainScreen.kt`, `app/…/ui/settings/SettingsScreen.kt`, `app/src/main/res/values/strings.xml`,
+`app/androidTest/…/ui/SettingsThemeTest.kt` (new), `SPEC.md` §3.2 §4.4 §6.1, `PRODUCT.md`.
+
+Settings gains a "Theme" row with three chips (System · Light · Dark) between Step goal and
+About (D27 c, e). Picking one applies at once to every app screen, the privacy screen, and the
+status- and navigation-bar icons, and survives a restart. Default System, so v1 behaviour is unchanged until
+someone picks. Rules in `:core`: `ThemeChoice { System, Light, Dark }`, `Settings.theme`,
+`Event.SetTheme(choice)` → `Effect.WriteTheme(choice)`, which joins the writes that append
+`RefreshWidget` (D26). There's also a pure `isDark(choice, systemDark)`. DataStore key `theme`, a string, absent =
+System. SPEC patches: §3.2 row `theme`; §4.4 the `SetTheme` case; §6.1 Settings lists "Calendars,
+Step goal, Theme, About", and the A1 line reads "light/dark following the Theme setting (default
+System)". `PRODUCT.md`: "Dark theme follows the system by default; Settings → Theme can force
+Light or Dark (D27)."
+
+Blocked by: none — can start now.
+
+Accept:
+- `./gradlew :core:test --tests '*ThemeTest*'` passes:
+  - `isDarkFollowsSystemOnlyForSystem`: the three choices × system dark on/off.
+  - `setThemeWritesAndRefreshesWidget`: the effects are `[WriteTheme(Dark), RefreshWidget]`.
+  - `defaultSettingsThemeIsSystem`.
+- `./gradlew connectedAndroidTest` passes `SettingsThemeTest`:
+  - `pickingDarkRecoloursTheApp`: with the system light, tapping **Dark** marks that chip
+    selected, and the Settings background pixel is `DarkColors.stock`.
+  - `choiceSurvivesRecreate`: the same after `ActivityScenario.recreate()`.
+- `grep -rn isSystemInDarkTheme app/src/main` matches one wiring line only.
+- `grep -n "no in-app toggle" PRODUCT.md` matches nothing.
+
+Non-goals: no widget change (U3). No pure-black palette, scheduled switching or accent choice
+(D27 g). No change to the window theme or splash (D27 assumptions). No Dynamic Color (D23).
+
+### U3 — Widget follows the theme choice — *added 2026-10-23*
+Files: `core/…/app/Theme.kt`, `core/test/…/app/ThemeTest.kt`, `app/…/widget/DashboardWidget.kt`,
+`SPEC.md` §6.2.
+
+The widget uses the app's choice (D27 d). Light or Dark forces that palette whatever the system
+mode, and System keeps the day/night pair. Changing the setting refreshes the widget (U2's
+`RefreshWidget`). The palette pick is a pure `:core` function, `widgetScheme(choice)` →
+`Light | Dark | DayNight`. SPEC §6.2 *amended*: "Colours follow the Theme setting: forced
+Light/Dark, or day/night on System."
+
+Blocked by: U2.
+
+Accept:
+- `./gradlew :core:test --tests '*ThemeTest*'` passes `widgetSchemeMatchesChoice` (the three
+  choices).
+- Full chain: `./gradlew test lint assembleDebug connectedAndroidTest` exits 0 on `pd_api37`, and
+  the count check includes `DashboardInsetsTest` and `SettingsThemeTest`.
+
+Non-goals: no widget preview fix (`previewLayout`), no 200 % font fix (`DESIGN.md` Known Gaps).
+No widget-only theme setting.
+
+### U4 — Owner pass, v0.2.0 — **OWNER gate** — *added 2026-10-23*
+Files: `app/build.gradle.kts` (`versionCode` 2, `versionName` "0.2.0"), `BACKLOG.md`, `FEEDBACK.md`,
+`CLAUDE.md` (Status), `DESIGN.md` (via the impeccable documenter, for the band and the Theme row).
+
+Bump the version. Build the signed release, verify the cert against `CLAUDE.md` Release, and
+install it over v0.1.0 on the owner's S25 with `adb install -r`, so data is kept (D27 f). The
+owner walks:
+1. Habits and to-dos from v0.1.0 are still there.
+2. Scroll the Dashboard: nothing passes under the clock, in light and dark.
+3. Settings → Theme → Dark with the phone in light mode: the app, the bar icons and the widget go
+   dark. Light with the phone in dark does the reverse. System follows the phone again.
+4. Kill and reopen the app: the choice holds.
+
+Blocked by: U1, U3.
+
+Accept:
+- `apksigner verify --print-certs` shows the `CLAUDE.md` cert, and `dumpsys package dev.armaan.pd`
+  shows `versionCode=2`.
+- The owner confirms steps 1–4; failures become `FEEDBACK.md` items.
+- `DESIGN.md` records the band and the Theme row.
+
+Non-goals: fixing anything found here inside this ticket.

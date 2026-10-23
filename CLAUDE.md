@@ -5,7 +5,7 @@
 **v1 shipped 2026-10-23** (Wave 1 closed; v0.1.0, `versionCode` 1, signed release on the owner's Galaxy S25). 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
-T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1), **F3** (status-bar overlap); next is `/feedback` on them. `.claude/` ported from Quickmate 2026-10-14.
+T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1). 2026-10-23: F3 + F4 scoped as D27 (status-bar band, System/Light/Dark theme setting, overrules PRD A1), `BACKLOG.md` Wave 2 U1–U4; frontier **U1** ∥ **U2**, waiting for "go". `.claude/` ported from Quickmate 2026-10-14.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -167,7 +167,7 @@ local state and gitignored.
 
 ## Still open
 
-- `FEEDBACK.md` F2 and F3, waiting for `/feedback`.
+- `FEEDBACK.md` F2, waiting for `/feedback`. Wave 2 (D27) waiting for "go".
 - Not seen on device in T9 (covered by tests): step 5's ring and goal change (Samsung Health had
   written no steps to Health Connect yet, so the card sat in `NoData`), the Sat → Mon habit
   streak, and the midnight to-do rollover.

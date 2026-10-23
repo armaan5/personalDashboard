@@ -38,6 +38,52 @@ for events. Dependency allowlist: `PRD.md` A3.
 
 ## Log
 
+### 2026-10-23 — D27: status-bar band and a theme setting (overrules PRD A1)
+
+**Owner ask.** F3: "When I scroll down the content at the top of the app UI sits behind the status
+bar making making it difficult to read the time. It doesnt look great mainly." F4: "add dark mode
+theme option in settings". From `FEEDBACK.md` F3, F4. Checked first: the Dashboard's `LazyColumn`
+puts the top inset in `contentPadding` (`DashboardScreen.kt:72`), so rows scroll under the bar;
+other screens have a fixed `TopBar`. The theme is `isSystemInDarkTheme()` (`Theme.kt:60`), bar
+icons follow the system (`enableEdgeToEdge()`, `MainActivity.kt:28`), and the widget uses
+day/night `ColorProvider`s (`DashboardWidget.kt:123`), so an in-app choice reaches none of them by
+itself.
+
+| # | Question | Decision |
+|---|---|---|
+| a | F3: bug or new ask? | **Bug** (owner). Fix: the Dashboard list is clipped below the status bar, and the inset behind the bar is a solid band in the stock colour. No gradient |
+| b | F4: overrule A1 ("no in-app toggle")? | **Overrule.** Settings gains a theme choice |
+| c | Which choices? | **System · Light · Dark**, default System. One DataStore key `theme` (absent = System, so nothing changes until someone picks) |
+| d | Does the widget follow it? | **Yes.** Light or Dark forces that palette on the widget; System keeps day/night. Changing it refreshes the widget |
+| e | Control | **Inline "Theme" row with three chips** in the weekday-chip style, between Step goal and About. No sub-screen, no dialog |
+| f | Owner pass build | **Signed release v0.2.0 (`versionCode` 2) installed over v0.1.0**, so the owner's data stays |
+| g | Scope-out | Owner ticked none of: pure-black theme, scheduled/sunset switching, accent choices, fading scrim. None is in Wave 2; any of them is a new ask |
+
+**Assumptions (not put to the owner).**
+- The status-bar and navigation-bar icons follow the *effective* theme (choice, else system), so
+  they stay legible on the band in both schemes.
+- The privacy screen (`PrivacyRationaleActivity`) honours the choice too.
+- Whether the effective theme is dark is a pure `:core` function of (choice, system dark), and
+  `SetTheme` is a reducer case whose write joins the writes that append `RefreshWidget` (D26).
+  `isSystemInDarkTheme()` is read in one wiring place.
+- The window theme stays `Theme.Material.Light`, so a cold start in dark may flash light for a
+  frame. That's unchanged from v1 and out of this wave.
+- Copy: row "Theme", chips "System", "Light", "Dark". Each chip announces its selected state.
+
+**Why these answers.** (c) a default of System keeps v1 behaviour for everyone who never opens
+Settings. (d) an app and widget that disagree would look like a bug. (e) one tap, and the chip
+style already exists. (f) a debug build can't install over the release without an uninstall,
+which would wipe the owner's data.
+
+**Accepted.** A widget forced to Light or Dark can clash with a launcher in the other mode.
+
+**SPEC.** §3.2 adds `theme`. §4.4 adds `SetTheme`. §6.1: Settings lists Theme, the A1 bar line
+reads "following the Theme setting (default System)", and the Dashboard gets the status-bar
+band. §6.2: widget colours follow the setting. `PRODUCT.md`'s "no in-app toggle" line changes to
+match. Each is patched by the ticket that ships it.
+
+Tasks: `BACKLOG.md` Wave 2, U1–U4.
+
 ### 2026-10-23 — D26: widget refresh details (T8)
 
 **Owner ask.** T8 seam round (`/tdd`). D25 left the widget's background steps read to T8: Health
