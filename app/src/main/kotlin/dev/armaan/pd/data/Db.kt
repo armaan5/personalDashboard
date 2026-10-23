@@ -31,6 +31,12 @@ abstract class Db : RoomDatabase() {
             Room.databaseBuilder(context, Db::class.java, NAME)
                 .setQueryCoroutineContext(queryContext)
                 .build()
+
+        /** For instrumented tests, through [dev.armaan.pd.AppContainer]. */
+        fun inMemory(context: Context, queryContext: CoroutineContext): Db =
+            Room.inMemoryDatabaseBuilder(context, Db::class.java)
+                .setQueryCoroutineContext(queryContext)
+                .build()
     }
 }
 

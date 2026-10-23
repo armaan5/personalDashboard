@@ -17,7 +17,8 @@ fun streak(habit: Habit, done: Set<LocalDate>, today: LocalDate): Int {
     return count
 }
 
-data class HabitRow(val habit: Habit, val doneToday: Boolean, val streak: Int)
+/** [week] is this week's chain, Monday first (D23). */
+data class HabitRow(val habit: Habit, val doneToday: Boolean, val streak: Int, val week: List<ChainDay>)
 
 /** The Habits card and screen for [today]: scheduled rows (counted) and "Not today" rows. */
 data class HabitsToday(val scheduled: List<HabitRow>, val notToday: List<HabitRow>) {
@@ -32,7 +33,7 @@ fun habitsToday(
 ): HabitsToday {
     val rows = habits.sortedBy { it.sortOrder }.map { habit ->
         val done = completions[habit.id].orEmpty()
-        HabitRow(habit, doneToday = today in done, streak = streak(habit, done, today))
+        HabitRow(habit, today in done, streak(habit, done, today), weekChain(habit, done, today))
     }
     val (scheduled, notToday) = rows.partition { it.habit.isScheduledOn(today) }
     return HabitsToday(scheduled, notToday)

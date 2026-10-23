@@ -79,6 +79,10 @@ state recomputation uses the new zone. Stored dates are not rewritten.
   - Stop at `created_on`.
   - Completions on unscheduled days (possible after a weekday change) are ignored.
   - The streak is computed against the *current* `weekdays`.
+- **Week chain** (D23; *amended 2026-10-22*, T4): each habit row shows this week, Monday to
+  Sunday. A day reads *done* (scheduled and done), *missed* (scheduled, before today, not done),
+  *open* (today, scheduled, not done), *ahead* (scheduled, after today) or *off* (not scheduled,
+  including days before `created_on`; a completion on an off day is ignored, as for the streak).
 - **Order:** `sort_order` ascending. New habits go last. v1 has no reordering UI.
 - **Delete:** removes the habit and its completions. A snackbar offers **Undo**, which restores
   both.

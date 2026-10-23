@@ -3,8 +3,8 @@ package dev.armaan.pd
 import android.app.Application
 
 class PdApplication : Application() {
+    /** Set once in [onCreate]; instrumented tests replace it before the activity starts. */
     lateinit var container: AppContainer
-        private set
 
     override fun onCreate() {
         super.onCreate()

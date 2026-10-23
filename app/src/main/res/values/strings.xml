@@ -1,4 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!-- en-GB, plain, short, second person, no exclamation marks (SPEC §7, PRODUCT.md). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">personalDashboard</string>
+
+    <!-- Masthead -->
+    <string name="week_label">Wk %1$d</string>
+    <string name="masthead_cd">%1$s %2$s, week %3$d</string>
+
+    <!-- Dashboard sections (SPEC §6.1, D18 order) -->
+    <string name="section_calendar">Calendar</string>
+    <string name="section_habits">Habits</string>
+    <string name="section_todos">To-dos</string>
+    <string name="section_steps">Steps</string>
+
+    <!-- Habits card and screen (SPEC §4.2) -->
+    <string name="habits_card_cd" tools:ignore="PluralsCandidate">Habits, %1$d of %2$d done</string>
+    <string name="habits_card_none_cd">Habits, nothing scheduled today</string>
+    <string name="habits_count">%1$d/%2$d</string>
+    <string name="habits_done">done</string>
+    <string name="habits_none_yet">No habits yet. Add one and tick it off each day it\'s due.</string>
+    <string name="habits_none_today">Nothing scheduled today.</string>
+    <string name="add_a_habit">Add a habit</string>
+    <string name="habits_title">Habits</string>
+    <string name="habits_today">Today</string>
+    <string name="habits_not_today">Not today</string>
+    <string name="habit_tick_cd">Tick %1$s</string>
+    <string name="habit_row_cd">%1$s, %2$d-day streak</string>
+    <string name="habit_row_no_streak_cd">%1$s, no streak yet</string>
+    <string name="habit_edit_action">Edit</string>
+    <string name="streak_label">streak</string>
+    <string name="schedule_every_day">Every day</string>
+    <string name="schedule_weekdays">Mon–Fri</string>
+    <string name="schedule_separator">,\u0020</string>
+
+    <!-- Habit sheet -->
+    <string name="add_habit">Add habit</string>
+    <string name="edit_habit">Edit habit</string>
+    <string name="habit_name">Name</string>
+    <string name="habit_name_helper" tools:ignore="PluralsCandidate">Up to %1$d characters</string>
+    <string name="habit_name_count">%1$d / %2$d</string>
+    <string name="habit_days">Days</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="back">Back</string>
+
+    <!-- Snackbars (SPEC §4.4 Message) -->
+    <string name="undo">Undo</string>
+    <string name="snack_habit_deleted">%1$s deleted</string>
+    <string name="snack_todo_done">%1$s done</string>
+    <plurals name="snack_history_cleared">
+        <item quantity="one">%d to-do cleared</item>
+        <item quantity="other">%d to-dos cleared</item>
+    </plurals>
 </resources>
