@@ -5,13 +5,13 @@
 **v0.2.0 shipped 2026-10-23** (Waves 1–2 closed; signed release on the owner's Galaxy S25). v1 = Wave 1, v0.1.0. 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
-T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1). **Wave 2 shipped 2026-10-23** (D27, U1–U4, v0.2.0 / `versionCode` 2 on the owner's S25): status-bar band on the Dashboard (F3), Settings → Theme System/Light/Dark, which overrules PRD A1 and is also followed by the widget (F4). `.claude/` ported from Quickmate 2026-10-14.
+T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (f7782ab): owner keystore created, signed release verified. T5 done (662f7f2): To-dos card, screen, sheet. T6 done (2f87995): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (cff1101): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (f0d4fb8): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (235da3f): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1). **Wave 2 shipped 2026-10-23** (D27, U1–U4, v0.2.0 / `versionCode` 2 on the owner's S25): status-bar band on the Dashboard (F3), Settings → Theme System/Light/Dark, which overrules PRD A1 and is also followed by the widget (F4). `.claude/` ported from Quickmate 2026-10-14.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
-  `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
+  `~/Documents/Junkertown/Projects/personalDashboard`. Public on GitHub: `github.com/armaan5/personalDashboard` (remote `origin`, 2026-10-23, MIT). Commits use the GitHub noreply email (history rewritten 2026-10-23).
 - **Platform: Android, native.** Kotlin + Jetpack Compose, Gradle (Kotlin DSL) (2026-10-14).
-- **This is a git repo**, no remote. Delivery mode: **commit to `main` directly**, solo project,
-  same as Quickmate. Ask before adding a remote or pushing.
+- **This is a git repo**, remote `origin` (GitHub, public). Delivery mode: **commit to `main` directly**, solo project,
+  same as Quickmate. Ask before pushing.
 
 Do not add dependencies beyond what the current backlog task or a decision row names.
 

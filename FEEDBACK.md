@@ -12,7 +12,7 @@ Context: said right after the dev env setup, with `CLAUDE.md` Status naming the 
 "scope v1 into `PRD.md`". Taken as the go-ahead for the v1 scoping session. Every answer in
 that session is recorded verbatim in `PRD.md` §1.
 
-Status: shipped 2026-10-23, bef9797
+Status: shipped 2026-10-23, 235da3f
 
 ## F2 — 2026-10-23 — T9 verification (emulator, API 30)
 > First launch shows the calendar permission dialog.
@@ -39,9 +39,9 @@ scrolled, so the date head and section content scroll under the clock and icons.
 in T7's finish review (`CLAUDE.md` "Still open") and `DESIGN.md` Known Gaps; also seen on
 `pd_api30` in T9. Owner asked to file it for now, not fix it.
 
-Status: shipped 2026-10-23, 5b003ac (v0.2.0)
+Status: shipped 2026-10-23, c61b9ca (v0.2.0)
 
 ## F4 — 2026-10-23 — owner (chat)
 > add dark mode theme option in settings
 
-Status: shipped 2026-10-23, 5b003ac (v0.2.0)
+Status: shipped 2026-10-23, c61b9ca (v0.2.0)

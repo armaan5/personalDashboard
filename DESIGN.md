@@ -229,8 +229,8 @@ components:
 
 # Design System: personalDashboard
 
-*Written 2026-10-23 (T9) from the shipped Compose code at `134e648`; updated 2026-10-23 for
-Wave 2 (D27: status-bar band, theme setting; `2e70cd9`, `c67bdb1`, `71c8f5f`). The theme in
+*Written 2026-10-23 (T9) from the shipped Compose code at `4876942`; updated 2026-10-23 for
+Wave 2 (D27: status-bar band, theme setting; `ca83b48`, `14fbd38`, `ab2a836`). The theme in
 `app/src/main/kotlin/dev/armaan/pd/ui/theme/` is the source; this file describes it. Where the
 code and `design/t3/comps.html` (D23) disagree, the code is recorded and the divergence noted.
 Values are dp / sp; colour keys without `night-` are the light scheme, `night-*` its dark pair.*

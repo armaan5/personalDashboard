@@ -22,7 +22,7 @@ after T0. T9 closes the wave on a real device.
 Dependencies: the `PRD.md` A3 allowlist only, with each library added by the first ticket that
 uses it. No others.
 
-### T0 — Gradle scaffold — *added 2026-10-22* — **DONE 2026-10-22** (dfa8c1e)
+### T0 — Gradle scaffold — *added 2026-10-22* — **DONE 2026-10-22** (6f088da)
 Files: `settings.gradle.kts`, `build.gradle.kts`, `gradle/libs.versions.toml`, `gradle/wrapper/*`,
 `gradlew`, `core/build.gradle.kts`, `app/build.gradle.kts`, `app/src/main/AndroidManifest.xml`,
 `app/…/MainActivity.kt`, `app/…/ui/theme/Theme.kt`, `core/test/…/SmokeTest.kt`,
@@ -50,7 +50,7 @@ Accept: with `JAVA_HOME` set per `CLAUDE.md`:
 Non-goals: no Room, DataStore, Glance, WorkManager or Health Connect yet (each comes with its
 ticket). No real theme (T3/T4). No release signing (O1). No CI.
 
-### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (35ba61a)
+### T1 — Pure rules and reducer skeleton — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (5a1953e)
 Files: `core/…/time/Day.kt`, `core/…/habit/Habit.kt`, `core/…/habit/Streak.kt`,
 `core/…/todo/Todo.kt`, `core/…/todo/Buckets.kt`, `core/…/app/State.kt`, `core/…/app/Event.kt`,
 `core/…/app/Effect.kt`, `core/…/app/Reduce.kt`, `core/test/…/time/DayTest.kt`,
@@ -85,7 +85,7 @@ Accept: `./gradlew :core:test` passes, with cases named by capability:
 Non-goals: no persistence, no Android, no calendar/steps rules (T6/T7 add their pure halves), no
 UI.
 
-### T2 — Room v1, repositories, AppContainer — *added 2026-10-22* — **DONE 2026-10-22** (5c8fdcf)
+### T2 — Room v1, repositories, AppContainer — *added 2026-10-22* — **DONE 2026-10-22** (5a3c82d)
 Files: `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/schemas/` (generated),
 `app/…/data/Db.kt`, `app/…/data/HabitDao.kt`, `app/…/data/TodoDao.kt`, `app/…/data/Entities.kt`,
 `app/…/data/HabitRepository.kt`, `app/…/data/TodoRepository.kt`, `app/…/AppContainer.kt`,
@@ -111,7 +111,7 @@ Accept:
 Non-goals: no DataStore (T6), no UI, no migrations (none exist at v1), and no
 `fallbackToDestructiveMigration` ever.
 
-### T3 — Design direction round — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-22** (a83a7a7)
+### T3 — Design direction round — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-22** (08fc2bb)
 Files: `PRODUCT.md` (new), `.impeccable/` (local, gitignored), comps as the skill emits them.
 
 Run `impeccable` in native/Android mode (`reference/android.md`) for the dashboard (four cards,
@@ -130,7 +130,7 @@ Accept:
 Non-goals: no Kotlin. No `DESIGN.md` (written from the shipped UI after T8). No icon set beyond
 what the comps need.
 
-### T4 — Theme, dashboard shell, Habits — *added 2026-10-22* — **DONE 2026-10-22** (86146b3)
+### T4 — Theme, dashboard shell, Habits — *added 2026-10-22* — **DONE 2026-10-22** (215fb41)
 Files: `app/…/ui/theme/*`, `app/…/ui/MainScreen.kt`, `app/…/ui/dashboard/DashboardScreen.kt`,
 `app/…/ui/dashboard/HabitsCard.kt`, `app/…/ui/habits/HabitsScreen.kt`,
 `app/…/ui/habits/HabitSheet.kt`, `app/…/MainViewModel.kt`, `app/src/main/res/values/strings.xml`,
@@ -158,7 +158,7 @@ Accept:
 Non-goals: no habit reordering, no editing past days, no to-do/calendar/steps content, no
 animations beyond what the comps specify.
 
-### T5 — To-dos — *added 2026-10-22* — **DONE 2026-10-22** (fdde0b9)
+### T5 — To-dos — *added 2026-10-22* — **DONE 2026-10-22** (662f7f2)
 Files: `app/…/ui/dashboard/TodosCard.kt`, `app/…/ui/todos/TodosScreen.kt`,
 `app/…/ui/todos/TodoSheet.kt`, `app/…/MainViewModel.kt`, `app/…/ui/dashboard/DashboardScreen.kt`,
 `app/src/main/res/values/strings.xml`, `app/androidTest/…/ui/TodosFlowTest.kt`.
@@ -179,7 +179,7 @@ Accept:
 
 Non-goals: no due times, no reminders (D20), no unticking from history, no search or tags.
 
-### T6 — Calendar card and Settings — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (5248381)
+### T6 — Calendar card and Settings — **high-care** — *added 2026-10-22* — **DONE 2026-10-22** (2f87995)
 Files: `core/…/calendar/Agenda.kt`, `core/test/…/calendar/AgendaTest.kt`, `core/…/app/*`,
 `app/…/source/CalendarReader.kt`, `app/…/data/Settings.kt`,
 `app/…/ui/dashboard/CalendarCard.kt`, `app/…/ui/settings/SettingsScreen.kt`,
@@ -212,7 +212,7 @@ Accept:
 Non-goals: no event editing or detail screen (D21), no days beyond tomorrow, no colour-coding
 beyond the Settings swatch unless the comps ask for it.
 
-### T7 — Steps and Health Connect — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (c663e2a)
+### T7 — Steps and Health Connect — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (cff1101)
 Files: `core/…/steps/Steps.kt`, `core/test/…/steps/StepsTest.kt`, `core/…/app/*`,
 `app/…/source/StepsReader.kt`, `app/…/data/Settings.kt`, `app/…/ui/dashboard/StepsCard.kt`,
 `app/…/ui/settings/SettingsScreen.kt`, `app/…/ui/settings/AboutScreen.kt`,
@@ -246,7 +246,7 @@ Accept:
 Non-goals: no other Health Connect record types (D1), no writing to Health Connect, no history
 beyond 7 days, no chart library (A3).
 
-### T8 — Glance widget and refresh — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (c689283)
+### T8 — Glance widget and refresh — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (f0d4fb8)
 Files: `core/…/widget/Summary.kt`, `core/test/…/widget/SummaryTest.kt`,
 `app/…/widget/DashboardWidget.kt`, `app/…/widget/DashboardWidgetReceiver.kt`,
 `app/…/widget/RefreshWorker.kt`, `app/src/main/res/xml/dashboard_widget_info.xml`,
@@ -276,7 +276,7 @@ Accept:
 Non-goals: no widget actions (D19), no second widget (D2), no configuration activity, no
 separate widget cache.
 
-### O1 — Release signing — *added 2026-10-22* — **DONE 2026-10-23** (2c16afe)
+### O1 — Release signing — *added 2026-10-22* — **DONE 2026-10-23** (f7782ab)
 Files: `app/build.gradle.kts`, `CLAUDE.md` (Release section), `.gitignore`.
 
 `release` signing config per SPEC §8 (D5): reads `PD_STORE_FILE`, `PD_STORE_PASSWORD`,
@@ -295,7 +295,7 @@ Accept:
 
 Non-goals: no Play App Signing, no CI signing, no Firebase (D5).
 
-### T9 — Verification chain and owner manual pass — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-23** (bef9797)
+### T9 — Verification chain and owner manual pass — **OWNER gate** — *added 2026-10-22* — **DONE 2026-10-23** (235da3f)
 *Result:* the full chain exits 0 (22 instrumented tests). On API 30, `NeedsInstall` opens Health
 Connect's Play listing. The owner passed PRD §8 on a Galaxy S25 (API 37), except: step 1 shows the
 calendar dialog (F2); step 5 was seen only as `NoData`, because Samsung Health had written no
@@ -328,7 +328,7 @@ U1 (F3) and U2 (F4) touch different files and run in parallel worktrees. U3 foll
 reads U2's setting. U3 is the wave's last code ticket and runs the full chain. U4 is the owner
 pass on the S25. No new dependency.
 
-### U1 — Status-bar band on the Dashboard (F3) — *added 2026-10-23* — **DONE 2026-10-23** (2e70cd9)
+### U1 — Status-bar band on the Dashboard (F3) — *added 2026-10-23* — **DONE 2026-10-23** (ca83b48)
 Files: `app/…/ui/dashboard/DashboardScreen.kt`, `app/androidTest/…/ui/DashboardInsetsTest.kt` (new),
 `SPEC.md` §6.1.
 
@@ -350,7 +350,7 @@ Accept:
 Non-goals: no gradient or fading scrim (D27 g). No change to the `TopBar` screens or the
 navigation-bar inset. No collapsing masthead.
 
-### U2 — Theme setting: System / Light / Dark (F4) — *added 2026-10-23* — **DONE 2026-10-23** (c67bdb1)
+### U2 — Theme setting: System / Light / Dark (F4) — *added 2026-10-23* — **DONE 2026-10-23** (14fbd38)
 Files: `core/…/app/{Settings,Event,Effect,Reduce}.kt`, `core/…/app/Theme.kt` (new),
 `core/test/…/app/ThemeTest.kt` (new), `app/…/data/Settings.kt`, `app/…/MainViewModel.kt`,
 `app/…/MainActivity.kt`, `app/…/PrivacyRationaleActivity.kt`, `app/…/ui/theme/Theme.kt`,
@@ -385,7 +385,7 @@ Accept:
 Non-goals: no widget change (U3). No pure-black palette, scheduled switching or accent choice
 (D27 g). No change to the window theme or splash (D27 assumptions). No Dynamic Color (D23).
 
-### U3 — Widget follows the theme choice — *added 2026-10-23* — **DONE 2026-10-23** (71c8f5f)
+### U3 — Widget follows the theme choice — *added 2026-10-23* — **DONE 2026-10-23** (ab2a836)
 Files: `core/…/app/Theme.kt`, `core/test/…/app/ThemeTest.kt`, `app/…/widget/DashboardWidget.kt`,
 `SPEC.md` §6.2.
 
@@ -406,7 +406,7 @@ Accept:
 Non-goals: no widget preview fix (`previewLayout`), no 200 % font fix (`DESIGN.md` Known Gaps).
 No widget-only theme setting.
 
-### U4 — Owner pass, v0.2.0 — **OWNER gate** — *added 2026-10-23* — **DONE 2026-10-23** (5b003ac)
+### U4 — Owner pass, v0.2.0 — **OWNER gate** — *added 2026-10-23* — **DONE 2026-10-23** (c61b9ca)
 *Result:* v0.2.0 is signed with the `CLAUDE.md` cert and was installed over v0.1.0 on the owner's
 S25 (`versionCode` 1 → 2). The owner passed steps 1–4. `DESIGN.md` updated.
 Files: `app/build.gradle.kts` (`versionCode` 2, `versionName` "0.2.0"), `BACKLOG.md`, `FEEDBACK.md`,
