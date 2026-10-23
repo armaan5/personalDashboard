@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Wave 2 (D27: status-bar band, theme setting) added 2026-10-23, U1–U4. U1–U3 done. Frontier: **U4** (owner pass). Open feedback: F2.
+**Status:** Wave 1 (v1, D1–D26) **closed 2026-10-23**. T0–T6 done 2026-10-22, T7–T9 and O1 done 2026-10-23. Wave 2 (D27: status-bar band, theme setting) **closed 2026-10-23**, U1–U4 done, v0.2.0 shipped. Open feedback: F2.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. Wave 2: (U1 ∥ U2) → U3 → U4. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -406,7 +406,9 @@ Accept:
 Non-goals: no widget preview fix (`previewLayout`), no 200 % font fix (`DESIGN.md` Known Gaps).
 No widget-only theme setting.
 
-### U4 — Owner pass, v0.2.0 — **OWNER gate** — *added 2026-10-23*
+### U4 — Owner pass, v0.2.0 — **OWNER gate** — *added 2026-10-23* — **DONE 2026-10-23** (5b003ac)
+*Result:* v0.2.0 is signed with the `CLAUDE.md` cert and was installed over v0.1.0 on the owner's
+S25 (`versionCode` 1 → 2). The owner passed steps 1–4. `DESIGN.md` updated.
 Files: `app/build.gradle.kts` (`versionCode` 2, `versionName` "0.2.0"), `BACKLOG.md`, `FEEDBACK.md`,
 `CLAUDE.md` (Status), `DESIGN.md` (via the impeccable documenter, for the band and the Theme row).
 

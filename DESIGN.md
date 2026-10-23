@@ -186,6 +186,17 @@ components:
     textColor: "{colors.stock}"
     rounded: "{rounded.sm}"
     height: "48dp"
+  theme-chip:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.sm}"
+    padding: "6dp 4dp"
+    height: "48dp"
+  theme-chip-on:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.stock}"
+    rounded: "{rounded.sm}"
+    padding: "6dp 4dp"
+    height: "48dp"
   habit-tick-done:
     backgroundColor: "{colors.habits}"
     textColor: "{colors.stock}"
@@ -218,7 +229,8 @@ components:
 
 # Design System: personalDashboard
 
-*Written 2026-10-23 (T9) from the shipped Compose code at `134e648`. The theme in
+*Written 2026-10-23 (T9) from the shipped Compose code at `134e648`; updated 2026-10-23 for
+Wave 2 (D27: status-bar band, theme setting; `2e70cd9`, `c67bdb1`, `71c8f5f`). The theme in
 `app/src/main/kotlin/dev/armaan/pd/ui/theme/` is the source; this file describes it. Where the
 code and `design/t3/comps.html` (D23) disagree, the code is recorded and the divergence noted.
 Values are dp / sp; colour keys without `night-` are the light scheme, `night-*` its dark pair.*
@@ -238,7 +250,8 @@ and the head counts are set large in Barlow Condensed with tabular figures, so a
 numbers first and prose second. Density is planner-like but not spreadsheet-like: one 16 dp
 gutter, 20 dp between sections, every target at least 48 dp.
 
-Light and dark follow the system. No Dynamic Color (D23, rejected). The rejected looks are the
+Light or dark is the person's choice in Settings → Theme (System · Light · Dark, default System,
+D27); System follows the phone. The app and the privacy screen both honour it. No Dynamic Color (D23, rejected). The rejected looks are the
 stock Material 3 card stack ("generic Material template"), gamified/fitness-loud, and a dense
 spreadsheet.
 
@@ -326,7 +339,13 @@ Barlow, never condensed and never in capitals.
 
 ## Layout
 
-A single column, edge-to-edge (`enableEdgeToEdge`), insets applied as content padding. One 16 dp
+A single column, edge-to-edge (`enableEdgeToEdge`), insets applied as content padding. On the
+dashboard the top safe-drawing inset is a solid `stock` band and the list is clipped below it, so
+rows never scroll under the status bar (D27 a; no gradient or fading scrim); the side and bottom
+insets stay content padding. Other screens sit under their fixed top bar. The status- and
+navigation-bar icons follow the effective scheme (dark icons on light, light on dark); the status
+bar itself is transparent, and on three-button navigation the nav bar takes `enableEdgeToEdge`'s
+own scrims (white at 0xE6 light, `#1B1B1B` at 0x80 dark). One 16 dp
 gutter left and right; sections stack 20 dp apart. The masthead sits above the first section:
 weekday in ink-2 over the date, the ISO week tag and Settings bottom-aligned to the right.
 Dashboard section order is fixed: Calendar, Habits, To-dos, Steps (D18).
@@ -406,6 +425,11 @@ Dashed ink-2 goal line (4/3 dp) labelled at its right end, knocked out of any ba
 Weekday chips in the habit sheet: seven equal 48 dp squares, 6 dp apart, 4 dp corners. Off:
 1.5 dp ink-2 outline, ink letter. On: ink fill, stock letter.
 
+Theme chips (Settings → Theme): the same chip, three across. Equal width, at least 48 dp tall,
+6 dp apart, 4 dp horizontal and 6 dp vertical padding, labels "System", "Light", "Dark" in sentence
+case (the week style at 17 sp: Barlow Condensed 600, +0.04 em). One is always selected; off and on
+as above. A selectable group, each chip a radio button announcing its state.
+
 ### Inputs / Fields
 - **Style:** Material outlined field, 4 dp, ink outline at rest and focused, ink-2 label,
   calendar-blue cursor; helper text and a character count below.
@@ -413,6 +437,8 @@ Weekday chips in the habit sheet: seven equal 48 dp squares, 6 dp apart, 4 dp co
   clear button when set. Opens the Material date picker on stock, selected day in ink.
 - **Switch** (Settings → Calendars): on = ink track, stock thumb; off = stock track, ink-2 thumb
   and outline. The whole 64 dp row toggles.
+- **Theme row** (Settings, between Step goal and About): "Theme" in name type, a body-small ink-2
+  hint, then the three theme chips 12 dp below; 10 dp vertical padding, hairlines above and below.
 
 ### Navigation
 No bar or drawer. The dashboard masthead holds Settings; section heads open their screens. Each
@@ -428,7 +454,10 @@ Material snackbar on the inverse roles: ink container, stock text, 4 dp; Undo ac
 
 ### Widget (Glance)
 2×2 minimum, resizable, read-only; tap opens the dashboard. Stock card with 22 dp corners (a
-drawable, so it rounds below API 31). Header "Thu 22" bold 19 sp over "Oct" 15 sp ink-2, a 2 dp
+drawable, so it rounds below API 31). Colours follow Settings → Theme: Light or Dark forces that
+scheme's palette and card (`widget_stock_light` / `widget_stock_dark`, mirroring `stock` /
+`night`); System keeps day/night colour providers and the day/night `widget_stock` card. A change
+refreshes the widget. Header "Thu 22" bold 19 sp over "Oct" 15 sp ink-2, a 2 dp
 ink rule, then three equal lines (next event, steps, habits) split by 1 dp hairlines: 8 dp source
 dot, value bold 18 sp, optional unit 15 sp ink-2, optional "Open to set up" hint 12 sp ink-2 on
 the same line.
@@ -456,10 +485,8 @@ the same line.
 
 ## Known Gaps
 
-Recorded for the T9 owner pass; not fixed here.
+Recorded for the owner pass; not fixed here.
 
-- **Edge-to-edge status bar.** The dashboard scrolls under the status bar with no scrim, so
-  content collides with the system icons.
 - **Calendar time at 200 % font.** A timed row's start wraps inside its 52 dp column ("09:" /
   "00").
 - **Widget picker preview.** The picker shows Glance's loading layout, not a preview: no
@@ -468,9 +495,13 @@ Recorded for the T9 owner pass; not fixed here.
 - **Widget type is a fallback.** RemoteViews can't load bundled fonts, so the widget sets
   `sans-serif-condensed` (system) where the comp has Barlow Condensed. A platform limit, not a
   type choice; don't copy it into the app.
-- **`surfaceTint` unmapped.** `Theme.kt` copies Material's baseline scheme without overriding
-  `surfaceTint`, so a tonally elevated stock surface (e.g. the date-picker dialog) may take
-  Material's baseline tint. Unverified on device.
+- **Cold start in dark.** The window theme is still `Theme.Material.Light.NoActionBar`, and
+  `PdTheme` draws nothing until the choice loads, so a cold start in dark may show a light window
+  for a frame (accepted in D27, unchanged from v1).
+- **`surfaceTint` unmapped.** `Theme.kt`'s `scheme()` still copies Material's baseline light or
+  dark scheme without overriding `surfaceTint` (it stays Material's baseline primary), so a
+  tonally elevated stock surface (e.g. the date-picker dialog) may take Material's baseline tint.
+  Unverified on device.
 
 ### Divergences from the T3 comp (code recorded above)
 - Habit chain "today, open": comp is an ink ring inside a stock gap and outer ink ring; code is an

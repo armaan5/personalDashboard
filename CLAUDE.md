@@ -2,10 +2,10 @@
 
 ## Status
 
-**v1 shipped 2026-10-23** (Wave 1 closed; v0.1.0, `versionCode` 1, signed release on the owner's Galaxy S25). 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
+**v0.2.0 shipped 2026-10-23** (Waves 1–2 closed; signed release on the owner's Galaxy S25). v1 = Wave 1, v0.1.0. 2026-10-22: v1 grilled into `PRD.md` (D1–D22, assumptions A1–A9),
 `SPEC.md` v1 written, `BACKLOG.md` Wave 1 (T0–T9, O1) approved, owner said go. T0 (scaffold), T1 (pure rules), T2 (Room + AppContainer) done.
 T3 done: `PRODUCT.md` written, direction "The Wall Planner" approved (D23), comps in `design/t3/`.
-T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1). 2026-10-23: F3 + F4 scoped as D27 (status-bar band, System/Light/Dark theme setting, overrules PRD A1), `BACKLOG.md` Wave 2 U1–U4; frontier **U1** ∥ **U2**, waiting for "go". `.claude/` ported from Quickmate 2026-10-14.
+T4 done: theme, dashboard shell, Habits. O1 done 2026-10-23 (2c16afe): owner keystore created, signed release verified. T5 done (fdde0b9): To-dos card, screen, sheet. T6 done (5248381): Calendar card, permission flow, Settings → Calendars (D24). T7 done 2026-10-23 (c663e2a): Steps card, Health Connect, step goal, About (D25). T8 done 2026-10-23 (c689283): Glance widget, 30-min refresh, background steps read (D26). T9 done 2026-10-23 (bef9797): full chain green, `DESIGN.md` written, owner pass on device. Open: **F2** (first-launch calendar dialog vs PRD §8.1). **Wave 2 shipped 2026-10-23** (D27, U1–U4, v0.2.0 / `versionCode` 2 on the owner's S25): status-bar band on the Dashboard (F3), Settings → Theme System/Light/Dark, which overrules PRD A1 and is also followed by the widget (F4). `.claude/` ported from Quickmate 2026-10-14.
 
 - **App name: personalDashboard** (working name, 2026-10-14). Local directory
   `~/Documents/Junkertown/Projects/personalDashboard`. No remote yet.
@@ -167,12 +167,12 @@ local state and gitignored.
 
 ## Still open
 
-- `FEEDBACK.md` F2, waiting for `/feedback`. Wave 2 (D27) waiting for "go".
+- `FEEDBACK.md` F2, waiting for `/feedback`.
 - Not seen on device in T9 (covered by tests): step 5's ring and goal change (Samsung Health had
   written no steps to Health Connect yet, so the card sat in `NoData`), the Sat → Mon habit
   streak, and the midnight to-do rollover.
 - Known gaps in `DESIGN.md` not yet raised as F-items: at 200 % font a Calendar row's time wraps
   ("09:" / "00") and a 2×2 widget ellipsises every line; the widget picker shows Glance's loading
   layout (no `previewImage` / `previewLayout`); `surfaceTint` is left at Material's default
-  purple (`Theme.kt:39`), visual effect unchecked. Widget light/dark checked on API 37 only.
+  purple (`ui/theme/Theme.kt`, `PdColors.scheme`), visual effect unchecked. Widget light/dark checked on API 37 only.
   Anyone who granted steps before T8 isn't asked for background access (D26).
