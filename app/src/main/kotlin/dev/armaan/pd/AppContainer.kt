@@ -9,6 +9,7 @@ import dev.armaan.pd.data.SettingsStore
 import dev.armaan.pd.data.TodoRepository
 import dev.armaan.pd.source.CalendarReader
 import dev.armaan.pd.source.StepsReader
+import dev.armaan.pd.widget.DashboardWidget
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.time.Clock
@@ -39,6 +40,11 @@ class AppContainer(
     val settings = if (inMemory) SettingsStore.isolated(context, io) else SettingsStore.build(context, io)
     val calendar = CalendarReader(context.contentResolver, io)
     val steps = StepsReader(context, io)
+
+    private val appContext = context.applicationContext
+
+    /** SPEC §6.2: redraws every placed widget from the sources. */
+    suspend fun refreshWidget() = DashboardWidget.refresh(appContext)
 
     /** SPEC §5.1: whether `READ_CALENDAR` is granted right now. */
     val calendarGranted: () -> Boolean = calendarGranted

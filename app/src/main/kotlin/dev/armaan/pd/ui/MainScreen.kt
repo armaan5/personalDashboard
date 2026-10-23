@@ -102,7 +102,7 @@ fun MainScreen(vm: MainViewModel) {
                 is UiEffect.RequestPermission -> when (effect.kind) {
                     PermissionKind.Calendar -> requestCalendar.launch(Manifest.permission.READ_CALENDAR)
                     PermissionKind.Health -> try {
-                        requestHealth.launch(setOf(StepsReader.ReadSteps))
+                        requestHealth.launch(vm.healthPermissions())
                     } catch (_: ActivityNotFoundException) {
                         // Health Connect went away since the last check: re-check, which ends the request.
                         vm.checkHealth()

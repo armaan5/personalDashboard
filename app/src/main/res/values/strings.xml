@@ -157,4 +157,19 @@
         <item quantity="one">%d to-do cleared</item>
         <item quantity="other">%d to-dos cleared</item>
     </plurals>
+    <!-- Widget (SPEC §6.2) -->
+    <string name="widget_description">Your next event, steps and habits for today.</string>
+    <string name="widget_next">%1$s %2$s</string>
+    <string name="widget_next_tomorrow">Tomorrow %1$s %2$s</string>
+    <string name="widget_nothing_scheduled">Nothing scheduled</string>
+    <string name="widget_steps_of">/ %1$s</string>
+    <string name="widget_habits_count">%1$d / %2$d</string>
+    <string name="widget_habits_unit">habits</string>
+    <string name="widget_no_habits">No habits today</string>
+    <string name="widget_dash" translatable="false">—</string>
+    <string name="widget_set_up">Open to set up</string>
+    <string name="widget_next_cd">Next event, %1$s</string>
+    <string name="widget_calendar_set_up_cd">Calendar, open to set up</string>
+    <string name="widget_steps_set_up_cd">Steps, open to set up</string>
+    <string name="widget_steps_none_cd">Steps, nothing to show</string>
 </resources>

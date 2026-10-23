@@ -40,6 +40,9 @@ sealed interface Effect {
 
     data class WriteStepGoal(val goal: Int) : Effect
 
+    /** Redraws the widget from the sources (SPEC §6.2). Follows every write that changes what it shows. */
+    data object RefreshWidget : Effect
+
     data class ShowSnackbar(val message: Message, val undo: Boolean) : Effect
 
     data object Finish : Effect

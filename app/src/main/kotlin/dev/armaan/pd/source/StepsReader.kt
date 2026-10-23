@@ -2,17 +2,21 @@ package dev.armaan.pd.source
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.HealthCheck
 import dev.armaan.pd.steps.HealthSdk
+import dev.armaan.pd.time.today
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -36,8 +40,34 @@ class StepsReader(private val context: Context, private val io: CoroutineDispatc
         HealthCheck(sdk, granted)
     }
 
+    /**
+     * What the request asks for: `READ_STEPS`, plus background reads where Health Connect offers
+     * them, so the widget's 30-minute refresh can read steps too (D26). Only `READ_STEPS` decides
+     * the card's state.
+     */
+    fun permissions(): Set<String> = buildSet {
+        add(ReadSteps)
+        val background = orNull {
+            client.features.getFeatureStatus(HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND)
+        }
+        if (background == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE) add(ReadInBackground)
+    }
+
+    /**
+     * Today's total and the last 7 days (SPEC §5.3), for the card and the widget. Null when either
+     * read fails, including a background read without [ReadInBackground].
+     */
+    suspend fun read(now: Instant, zone: ZoneId): Event.StepsLoaded? {
+        val today = today(now, zone)
+        val total = total(today.atStartOfDay(zone).toInstant(), now) ?: return null
+        // Whole days: Health Connect drops a slice the range cuts short, which was today's.
+        // It reads these local times in the system zone, which is what zone() returns outside tests.
+        val days = daily(today.minusDays(6).atStartOfDay(), today.plusDays(1).atStartOfDay()) ?: return null
+        return Event.StepsLoaded(today, total, days)
+    }
+
     /** Total steps in `[from, until)`. Null when the read fails (revoked, backgrounded, provider gone). */
-    suspend fun total(from: Instant, until: Instant): Long? = withContext(io) {
+    private suspend fun total(from: Instant, until: Instant): Long? = withContext(io) {
         orNull {
             client.aggregate(
                 AggregateRequest(setOf(StepsRecord.COUNT_TOTAL), TimeRangeFilter.between(from, until)),
@@ -46,7 +76,7 @@ class StepsReader(private val context: Context, private val io: CoroutineDispatc
     }
 
     /** Daily totals by local date for `[from, until)`; days without records are absent. Null on failure. */
-    suspend fun daily(from: LocalDateTime, until: LocalDateTime): Map<LocalDate, Long>? = withContext(io) {
+    private suspend fun daily(from: LocalDateTime, until: LocalDateTime): Map<LocalDate, Long>? = withContext(io) {
         orNull {
             client.aggregateGroupByPeriod(
                 AggregateGroupByPeriodRequest(
@@ -69,5 +99,6 @@ class StepsReader(private val context: Context, private val io: CoroutineDispatc
 
     companion object {
         val ReadSteps: String = HealthPermission.getReadPermission(StepsRecord::class)
+        const val ReadInBackground: String = HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
     }
 }

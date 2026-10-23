@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The widget's stock, for its card drawable. Mirrors LightColors.stock (Color.kt). -->
+    <color name="widget_stock">#F7F9F8</color>
+</resources>

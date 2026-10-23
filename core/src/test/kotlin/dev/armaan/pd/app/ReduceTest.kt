@@ -16,6 +16,7 @@ import java.time.ZoneId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ReduceTest {
     // Thursday 2026-10-22, 11:00 in London.
@@ -70,13 +71,13 @@ class ReduceTest {
     @Test
     fun `tick - scheduled today emits a done completion for today`() {
         val out = run(Event.ToggleHabit(1, today), base().copy(completions = emptyMap()))
-        assertEquals(listOf<Effect>(Effect.ToggleCompletion(1, today, done = true)), out.effects)
+        assertEquals(listOf(Effect.ToggleCompletion(1, today, done = true), Effect.RefreshWidget), out.effects)
     }
 
     @Test
     fun `tick - again today undoes it`() {
         val ticked = base().copy(completions = mapOf(1L to setOf(today)))
-        assertEquals(listOf<Effect>(Effect.ToggleCompletion(1, today, done = false)), run(Event.ToggleHabit(1, today), ticked).effects)
+        assertEquals(listOf(Effect.ToggleCompletion(1, today, done = false), Effect.RefreshWidget), run(Event.ToggleHabit(1, today), ticked).effects)
     }
 
     @Test
@@ -98,7 +99,7 @@ class ReduceTest {
     fun `save habit - a new habit is created today and goes last`() {
         val out = run(Event.SaveHabit(0, "  Read ", DayOfWeek.entries.toSet()))
         assertEquals(
-            listOf<Effect>(Effect.WriteHabit(Habit(0, "Read", DayOfWeek.entries.toSet(), createdOn = today, sortOrder = 2))),
+            listOf(Effect.WriteHabit(Habit(0, "Read", DayOfWeek.entries.toSet(), createdOn = today, sortOrder = 2)), Effect.RefreshWidget),
             out.effects,
         )
     }
@@ -106,7 +107,7 @@ class ReduceTest {
     @Test
     fun `save habit - an edit keeps created_on and sort_order`() {
         val out = run(Event.SaveHabit(1, "Stretch more", setOf(MONDAY)))
-        assertEquals(listOf<Effect>(Effect.WriteHabit(stretch.copy(name = "Stretch more", weekdays = setOf(MONDAY)))), out.effects)
+        assertEquals(listOf(Effect.WriteHabit(stretch.copy(name = "Stretch more", weekdays = setOf(MONDAY))), Effect.RefreshWidget), out.effects)
     }
 
     @Test
@@ -119,7 +120,7 @@ class ReduceTest {
     fun `delete habit - emits DeleteHabit then a snackbar with undo`() {
         val out = run(Event.DeleteHabit(1))
         assertEquals(
-            listOf(Effect.DeleteHabit(1), Effect.ShowSnackbar(Message.HabitDeleted("Stretch"), undo = true)),
+            listOf(Effect.DeleteHabit(1), Effect.ShowSnackbar(Message.HabitDeleted("Stretch"), undo = true), Effect.RefreshWidget),
             out.effects,
         )
     }
@@ -128,7 +129,7 @@ class ReduceTest {
     fun `delete habit - undo restores it with its completions`() {
         val deleted = run(Event.DeleteHabit(1)).state
         val out = run(Event.Undo, deleted)
-        assertEquals(listOf<Effect>(Effect.RestoreHabit(stretch, setOf(oct(20), oct(21)))), out.effects)
+        assertEquals(listOf(Effect.RestoreHabit(stretch, setOf(oct(20), oct(21))), Effect.RefreshWidget), out.effects)
         assertNull(out.state.pendingUndo)
     }
 
@@ -143,7 +144,7 @@ class ReduceTest {
     @Test
     fun `save todo - a new to-do is stamped with now`() {
         val out = run(Event.SaveTodo(0, " Buy milk ", oct(23)))
-        assertEquals(listOf<Effect>(Effect.WriteTodo(Todo(0, "Buy milk", oct(23), createdAt = now, completedOn = null))), out.effects)
+        assertEquals(listOf(Effect.WriteTodo(Todo(0, "Buy milk", oct(23), createdAt = now, completedOn = null)), Effect.RefreshWidget), out.effects)
     }
 
     @Test
@@ -155,7 +156,7 @@ class ReduceTest {
     fun `tick todo - completes it today with an undo snackbar`() {
         val out = run(Event.ToggleTodo(1))
         assertEquals(
-            listOf(Effect.WriteTodo(todo(1, done = today)), Effect.ShowSnackbar(Message.TodoDone("Item 1"), undo = true)),
+            listOf(Effect.WriteTodo(todo(1, done = today)), Effect.ShowSnackbar(Message.TodoDone("Item 1"), undo = true), Effect.RefreshWidget),
             out.effects,
         )
     }
@@ -163,7 +164,7 @@ class ReduceTest {
     @Test
     fun `tick todo - undo reopens it`() {
         val out = run(Event.Undo, run(Event.ToggleTodo(1)).state)
-        assertEquals(listOf<Effect>(Effect.WriteTodo(todo(1))), out.effects)
+        assertEquals(listOf(Effect.WriteTodo(todo(1)), Effect.RefreshWidget), out.effects)
     }
 
     @Test
@@ -171,12 +172,12 @@ class ReduceTest {
         val ticked = run(Event.ToggleTodo(1)).state
         val edited = todo(1, done = today).copy(title = "Item 1, renamed")
         val reloaded = run(Event.TodosLoaded(listOf(edited)), ticked).state
-        assertEquals(listOf<Effect>(Effect.WriteTodo(edited.copy(completedOn = null))), run(Event.Undo, reloaded).effects)
+        assertEquals(listOf(Effect.WriteTodo(edited.copy(completedOn = null)), Effect.RefreshWidget), run(Event.Undo, reloaded).effects)
     }
 
     @Test
     fun `untick todo - allowed while done today`() {
-        assertEquals(listOf<Effect>(Effect.WriteTodo(todo(2))), run(Event.ToggleTodo(2)).effects)
+        assertEquals(listOf(Effect.WriteTodo(todo(2)), Effect.RefreshWidget), run(Event.ToggleTodo(2)).effects)
     }
 
     @Test
@@ -188,7 +189,7 @@ class ReduceTest {
     fun `clear history - emits DeleteTodos then a snackbar with undo`() {
         val out = run(Event.ClearHistory)
         assertEquals(
-            listOf(Effect.DeleteTodos(listOf(3, 4)), Effect.ShowSnackbar(Message.HistoryCleared(2), undo = true)),
+            listOf(Effect.DeleteTodos(listOf(3, 4)), Effect.ShowSnackbar(Message.HistoryCleared(2), undo = true), Effect.RefreshWidget),
             out.effects,
         )
     }
@@ -196,7 +197,7 @@ class ReduceTest {
     @Test
     fun `clear history - undo restores the cleared items`() {
         val out = run(Event.Undo, run(Event.ClearHistory).state)
-        assertEquals(listOf<Effect>(Effect.WriteTodo(todo(3, done = oct(20))), Effect.WriteTodo(todo(4, done = oct(19)))), out.effects)
+        assertEquals(listOf(Effect.WriteTodo(todo(3, done = oct(20))), Effect.WriteTodo(todo(4, done = oct(19))), Effect.RefreshWidget), out.effects)
     }
 
     @Test
@@ -265,11 +266,11 @@ class ReduceTest {
     @Test
     fun `toggle calendar - the first toggle writes the visible default explicitly`() {
         assertEquals(
-            listOf<Effect>(Effect.WriteCalendarIds(setOf("1", "2", "3"))),
+            listOf(Effect.WriteCalendarIds(setOf("1", "2", "3")), Effect.RefreshWidget),
             run(Event.ToggleCalendar("3", on = true), calendarsState(stored = null)).effects,
         )
         assertEquals(
-            listOf<Effect>(Effect.WriteCalendarIds(setOf("2"))),
+            listOf(Effect.WriteCalendarIds(setOf("2")), Effect.RefreshWidget),
             run(Event.ToggleCalendar("1", on = false), calendarsState(stored = null)).effects,
         )
     }
@@ -277,7 +278,7 @@ class ReduceTest {
     @Test
     fun `toggle calendar - later toggles edit the stored set`() {
         assertEquals(
-            listOf<Effect>(Effect.WriteCalendarIds(setOf("3"))),
+            listOf(Effect.WriteCalendarIds(setOf("3")), Effect.RefreshWidget),
             run(Event.ToggleCalendar("3", on = true), calendarsState(stored = emptySet())).effects,
         )
     }
@@ -288,5 +289,45 @@ class ReduceTest {
         val calendars = run(Event.Open(Screen.Calendars), settings).state
         assertEquals(listOf(Screen.Dashboard, Screen.Settings, Screen.Calendars), calendars.backStack)
         assertEquals(listOf(Screen.Dashboard, Screen.Settings), run(Event.Back, calendars).state.backStack)
+    }
+
+    // Widget refresh (SPEC §6.2, D26)
+
+    private fun assertRefreshesLast(effects: List<Effect>) {
+        assertEquals(Effect.RefreshWidget, effects.lastOrNull(), "last of $effects")
+        assertEquals(1, effects.count { it == Effect.RefreshWidget }, "once in $effects")
+        assertTrue(effects.size > 1, "after a write in $effects")
+    }
+
+    @Test
+    fun `refresh widget - every habit write ends with RefreshWidget`() {
+        assertRefreshesLast(run(Event.SaveHabit(0, "Read", weekdays)).effects)
+        assertRefreshesLast(run(Event.SaveHabit(1, "Stretch more", weekdays)).effects)
+        assertRefreshesLast(run(Event.ToggleHabit(1, today)).effects)
+        assertRefreshesLast(run(Event.DeleteHabit(1)).effects)
+        assertRefreshesLast(run(Event.Undo, run(Event.DeleteHabit(1)).state).effects)
+    }
+
+    @Test
+    fun `refresh widget - every to-do write ends with RefreshWidget`() {
+        assertRefreshesLast(run(Event.SaveTodo(0, "Buy milk", null)).effects)
+        assertRefreshesLast(run(Event.ToggleTodo(1)).effects)
+        assertRefreshesLast(run(Event.ToggleTodo(2)).effects)
+        assertRefreshesLast(run(Event.Undo, run(Event.ToggleTodo(1)).state).effects)
+        assertRefreshesLast(run(Event.ClearHistory).effects)
+        assertRefreshesLast(run(Event.Undo, run(Event.ClearHistory).state).effects)
+    }
+
+    @Test
+    fun `refresh widget - the step goal and the calendar choice refresh it too`() {
+        assertEquals(listOf(Effect.WriteStepGoal(9000), Effect.RefreshWidget), run(Event.SetStepGoal(9000)).effects)
+        assertRefreshesLast(run(Event.ToggleCalendar("3", on = true), calendarsState(stored = null)).effects)
+    }
+
+    @Test
+    fun `refresh widget - not without a write`() {
+        assertEquals(emptyList(), run(Event.Open(Screen.Habits)).effects)
+        assertEquals(emptyList(), run(Event.SaveHabit(0, "  ", weekdays)).effects)
+        assertEquals(listOf<Effect>(Effect.RequestPermission(PermissionKind.Calendar)), run(Event.GrantCalendar, calendarState(PermissionCheck(false, rationale = true), asked = false)).effects)
     }
 }

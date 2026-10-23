@@ -18,7 +18,21 @@ import java.time.ZoneId
 data class Next(val state: State, val effects: List<Effect> = emptyList())
 
 /** SPEC §4.4. Pure: no I/O, time and zone are arguments. */
-fun reduce(state: State, event: Event, now: Instant, zone: ZoneId): Next {
+fun reduce(state: State, event: Event, now: Instant, zone: ZoneId): Next = step(state, event, now, zone).refreshingWidget()
+
+/** SPEC §6.2, D26: a write the widget shows is followed by one refresh, after the writes. */
+private fun Next.refreshingWidget(): Next =
+    if (effects.any { it.changesWidget }) copy(effects = effects + Effect.RefreshWidget) else this
+
+private val Effect.changesWidget: Boolean
+    get() = when (this) {
+        is Effect.WriteHabit, is Effect.DeleteHabit, is Effect.RestoreHabit, is Effect.ToggleCompletion,
+        is Effect.WriteTodo, is Effect.DeleteTodos, is Effect.WriteStepGoal, is Effect.WriteCalendarIds,
+        -> true
+        else -> false
+    }
+
+private fun step(state: State, event: Event, now: Instant, zone: ZoneId): Next {
     val today = today(now, zone)
     return when (event) {
         is Event.Open -> when {

@@ -104,6 +104,9 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { dispatch(Event.HealthChecked(container.steps.check())) }
     }
 
+    /** What Health Connect's request asks for (D26). */
+    fun healthPermissions(): Set<String> = container.steps.permissions()
+
     fun healthAnswered(granted: Boolean) {
         dispatch(Event.HealthAnswered(granted))
         checkHealth()
@@ -114,6 +117,8 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         checkCalendar(calendarRationale)
         checkHealth()
         stepsTick.value++
+        // SPEC §6.2: the widget catches up on every foreground.
+        viewModelScope.launch { container.refreshWidget() }
         ticker?.cancel()
         ticker = viewModelScope.launch {
             while (isActive) {
@@ -161,16 +166,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         combine(granted, stepsTick) { g, _ -> g }
             .collectLatest { isGranted ->
                 if (!isGranted) return@collectLatest
-                val now = container.clock.instant()
-                val zone = container.zone()
-                val today = today(now, zone)
-                val total = container.steps.total(today.atStartOfDay(zone).toInstant(), now) ?: return@collectLatest
-                // Whole days: Health Connect drops a slice the range cuts short, which was today's.
-                // It reads these local times in the system zone, which is what zone() returns
-                // outside tests.
-                val days = container.steps.daily(today.minusDays(6).atStartOfDay(), today.plusDays(1).atStartOfDay())
-                    ?: return@collectLatest
-                dispatch(Event.StepsLoaded(today, total, days))
+                container.steps.read(container.clock.instant(), container.zone())?.let(::dispatch)
             }
     }
 
@@ -194,6 +190,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             Effect.OpenHealthConnectInstall -> ui.send(UiEffect.OpenHealthConnectInstall)
             Effect.OpenHealthConnectSettings -> ui.send(UiEffect.OpenHealthConnectSettings)
             is Effect.WriteStepGoal -> container.settings.setStepGoal(effect.goal)
+            Effect.RefreshWidget -> container.refreshWidget()
             is Effect.ShowSnackbar -> ui.send(UiEffect.Snackbar(effect.message, effect.undo))
             Effect.Finish -> ui.send(UiEffect.Finish)
         }

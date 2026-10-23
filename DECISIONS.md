@@ -38,6 +38,33 @@ for events. Dependency allowlist: `PRD.md` A3.
 
 ## Log
 
+### 2026-10-23 — D26: widget refresh details (T8)
+
+**Owner ask.** T8 seam round (`/tdd`). D25 left the widget's background steps read to T8: Health
+Connect refuses reads from the background, so the 30-minute refresh would read nothing. The
+Accept names `TestListenableWorkerBuilder`, which is in `work-testing`, not on the A3 allowlist.
+
+**Decided.**
+- **Background reads** (owner pick, over "last foreground value" and "dash in background"): the
+  Health Connect request also asks for `READ_HEALTH_DATA_IN_BACKGROUND` where Health Connect
+  reports the feature available. Only `READ_STEPS` decides the card's state. When a background
+  read still fails (refused, unsupported), the widget's steps line shows a dash without the
+  set-up hint. Someone who granted steps before T8 isn't asked again: Granted never re-requests.
+  They can turn background access on in Health Connect's page for the app.
+- **`work-testing`** (owner pick) is added as `androidTestImplementation` only. Nothing ships.
+- **More refresh triggers** (owner pick): the step goal and the calendar choice change widget
+  lines, so `WriteStepGoal` and `WriteCalendarIds` refresh it too, like habit and to-do writes.
+  The reducer appends one `RefreshWidget` after the writes, in one place.
+- Glance keeps a widget's session alive for a while, and an update to a live session only
+  recomposes. A refresh therefore bumps a counter the content watches, and the content re-reads
+  the sources on each bump. The counter carries no data, so there is still no widget cache.
+- The widget opens the Dashboard with `CLEAR_TOP | SINGLE_TOP` and an extra. A running app gets
+  it in `onNewIntent` and sends `Open(Dashboard)`. No second activity instance.
+- RemoteViews can't load the bundled Barlow, so the widget uses the system `sans-serif-condensed`.
+  "Open to set up" sits after the dash on the same line: stacked under it, it clipped at 2×2.
+
+**SPEC patches.** §2, §4.4, §5.3, §6.2 (*amended 2026-10-23*, T8).
+
 ### 2026-10-23 — D25: Health Connect permission rule and test seam (T7)
 
 **Owner ask.** T7 seam round (`/tdd`). Health Connect has no `shouldShowRequestPermissionRationale`;

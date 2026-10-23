@@ -31,6 +31,8 @@ home-screen widget summarises them (D19). All data comes from the phone itself (
   - A `<queries>` entry for the Health Connect package (needed on 28–33).
   - *Amended 2026-10-23 (T7, D25):* debug builds alone also declare
     `android.permission.health.WRITE_STEPS`, for the instrumented test's insert. Release doesn't.
+  - *Amended 2026-10-23 (T8, D26):* also `android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND`,
+    so the widget's refresh can read steps. The widget's receiver, `DashboardWidgetReceiver`.
 - **Time:** one `Clock` is created in `AppContainer`. Everything else receives it or an `Instant` /
   `ZoneId`. `ZoneId.systemDefault()` is read at the same wiring place, and re-read on
   `ACTION_TIMEZONE_CHANGED` and on foreground (D13).
@@ -148,6 +150,11 @@ daily totals by local date for days with records); the UI sends `StepsShown`, `G
 reducer clamps it, §5.3). `RequestPermission(Health)` makes plumbing set `asked_health`, then launch
 Health Connect's request contract.
 
+*Amended 2026-10-23 (T8, D26):* `RefreshWidget` follows every write the widget shows:
+`WriteHabit`, `DeleteHabit`, `RestoreHabit`, `ToggleCompletion`, `WriteTodo`, `DeleteTodos`,
+`WriteStepGoal` and `WriteCalendarIds`. The reducer appends it once, after the event's other
+effects.
+
 ## 5. Sources
 
 ### 5.1 Permissions (D7)
@@ -256,6 +263,9 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
     days". The ring and bars are decorative.
   - Settings → Step goal: − and + buttons either side of the value, disabled at the ends; the
     value is announced as "Step goal, 8,000", politely, when it changes.
+- *Amended 2026-10-23 (T8, D26):* the request asks for `READ_STEPS`, plus
+  `READ_HEALTH_DATA_IN_BACKGROUND` where Health Connect reports that feature available. Only
+  `READ_STEPS` decides the state.
 
 ## 6. UI
 
@@ -294,6 +304,20 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
     start and when the widget is added.
   - Plus an immediate `updateAll` after every habit/to-do write and on app foreground.
   - The widget reads from the same sources and `:core` rules as the app. There is no separate cache.
+- *Amended 2026-10-23 (T8, D26):*
+  - Header: the local date, "Thu 22" and "Oct". Each line has its source's dot.
+  - Next event: today's agenda (§5.2) first, then tomorrow's; all-day events are skipped. A blank
+    title reads "No title". Steps: "6,240 / 8,000" when the Steps card would show a count. A
+    dash with "Open to set up" beside it when access isn't granted or Health Connect needs
+    installing. A dash alone when Steps is unavailable, has no data, or can't be read (a
+    background read without background access). Habits: "2 / 3 habits".
+  - The step goal and the calendar choice also refresh the widget (§4.4).
+  - A refresh re-reads every source, including while Glance's session is still live.
+  - The tap opens the Dashboard, bringing a running app back to it rather than stacking a second
+    copy.
+  - The system condensed face stands in for Barlow, which RemoteViews can't load.
+  - TalkBack reads each line: "Next event, 10:30 Design review", "Steps, 6,240 of 8,000 today",
+    "Habits, 2 of 3 done", or "Calendar, open to set up".
 
 ## 7. Copy
 
