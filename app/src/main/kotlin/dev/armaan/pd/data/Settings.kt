@@ -6,10 +6,12 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.Settings
+import dev.armaan.pd.steps.GoalDefault
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,7 +24,14 @@ import kotlinx.coroutines.flow.map
 /** Plumbing: DataStore `settings` (SPEC §3.2) in, `:core` [Settings] out. */
 class SettingsStore(private val store: DataStore<Preferences>) {
     val settings: Flow<Settings> = store.data
-        .map { prefs -> Settings(calendarIds = prefs[CalendarIds], askedCalendar = prefs[AskedCalendar] ?: false) }
+        .map { prefs ->
+            Settings(
+                calendarIds = prefs[CalendarIds],
+                askedCalendar = prefs[AskedCalendar] ?: false,
+                stepGoal = prefs[StepGoal] ?: GoalDefault,
+                askedHealth = prefs[AskedHealth] ?: false,
+            )
+        }
         .distinctUntilChanged()
 
     val loaded: Flow<Event.SettingsLoaded> = settings.map(Event::SettingsLoaded)
@@ -35,9 +44,19 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         store.edit { it[CalendarIds] = ids }
     }
 
+    suspend fun setAskedHealth() {
+        store.edit { it[AskedHealth] = true }
+    }
+
+    suspend fun setStepGoal(goal: Int) {
+        store.edit { it[StepGoal] = goal }
+    }
+
     companion object {
         private val CalendarIds = stringSetPreferencesKey("calendar_ids")
         private val AskedCalendar = booleanPreferencesKey("asked_calendar")
+        private val StepGoal = intPreferencesKey("step_goal")
+        private val AskedHealth = booleanPreferencesKey("asked_health")
 
         fun build(context: Context, io: CoroutineDispatcher) =
             create(io) { context.preferencesDataStoreFile("settings") }

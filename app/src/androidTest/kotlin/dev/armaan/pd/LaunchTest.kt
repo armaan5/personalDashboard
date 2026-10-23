@@ -1,6 +1,8 @@
 package dev.armaan.pd
 
 import android.Manifest
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.StepsRecord
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -14,11 +16,13 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LaunchTest {
-    // Granted up front, so the Calendar card's first-view request doesn't cover the dashboard.
+    // Granted up front, so the Calendar and Steps cards' first-view requests don't cover the dashboard.
     private val grant = object : ExternalResource() {
         override fun before() {
             val instrumentation = InstrumentationRegistry.getInstrumentation()
-            instrumentation.uiAutomation.grantRuntimePermission(instrumentation.targetContext.packageName, Manifest.permission.READ_CALENDAR)
+            val pkg = instrumentation.targetContext.packageName
+            instrumentation.uiAutomation.grantRuntimePermission(pkg, Manifest.permission.READ_CALENDAR)
+            instrumentation.uiAutomation.grantRuntimePermission(pkg, HealthPermission.getReadPermission(StepsRecord::class))
         }
     }
 

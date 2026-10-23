@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.health.connect.client)
     implementation(libs.kotlinx.coroutines.core)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))

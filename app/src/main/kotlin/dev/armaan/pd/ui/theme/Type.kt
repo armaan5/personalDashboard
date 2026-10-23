@@ -78,6 +78,12 @@ data class PdType(
     val allDayTag: TextStyle = condensed(FontWeight.SemiBold, 13, 16, 0.05),
     /** A sub-head inside a section, e.g. “Tomorrow”. */
     val sub: TextStyle = condensed(FontWeight.SemiBold, 14, 16, 0.07),
+    /** Steps: today's count beside the ring (D23). */
+    val stepsCount: TextStyle = condensed(FontWeight.Bold, 48, 48),
+    /** “of 8,000 today” under the count. */
+    val stepsOf: TextStyle = condensed(FontWeight.Medium, 17, 20, 0.02),
+    /** Weekday letters under the bars, and the goal line's label. */
+    val barLabel: TextStyle = condensed(FontWeight.SemiBold, 12, 14),
 )
 
 val PdTypography = Typography(

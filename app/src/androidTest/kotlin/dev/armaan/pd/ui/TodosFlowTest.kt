@@ -41,7 +41,11 @@ class TodosFlowTest {
             val utc = ZoneOffset.UTC
             // Calendar refused and already asked: no system dialog, and no reads of the device's own calendars.
             app.container = AppContainer(app, clock = Clock.fixed(now, utc), zoneOf = { utc }, inMemory = true, calendarGranted = { false })
-            runBlocking { app.container.settings.setAskedCalendar() }
+            runBlocking {
+                app.container.settings.setAskedCalendar()
+                // Steps already asked too, so Health Connect's request doesn't cover the dashboard.
+                app.container.settings.setAskedHealth()
+            }
         }
     }
 

@@ -38,6 +38,43 @@ for events. Dependency allowlist: `PRD.md` A3.
 
 ## Log
 
+### 2026-10-23 — D25: Health Connect permission rule and test seam (T7)
+
+**Owner ask.** T7 seam round (`/tdd`). Health Connect has no `shouldShowRequestPermissionRationale`;
+after two refusals its dialog silently stops appearing. The Accept test must insert a
+`StepsRecord` through `HealthConnectClient`, but test code runs in the app's process, so the
+insert needs the app's own write grant.
+
+**Decided.**
+- **Repeat-refusal rule** (owner pick): a Health Connect request that comes back refused while
+  `asked_health` was already true when it fired means `PermanentlyDenied`, for this process only.
+  After a restart it reads `Denied` again; one **Grant access** tap re-requests, Health Connect
+  returns at once, and the copy switches to "turn it on in Health Connect's settings". No new
+  DataStore key. A grant clears it.
+- **Debug-only `WRITE_STEPS`** (owner pick) in `app/src/debug/AndroidManifest.xml`. The release
+  manifest stays read-only; app code never writes (D1, D16).
+- The test grants through Health Connect's own per-app page (`ACTION_MANAGE_HEALTH_PERMISSIONS`,
+  "Allow all", driven with the platform `UiAutomation`, no new test library), not `pm grant`.
+  Seen on `pd_api37`: after `pm grant`, `readRecords` returned the record but `aggregate` returned
+  null with no data origins. Only Health Connect's own grant path puts the app on its
+  data-priority list, and `aggregate` ignores apps that aren't on it. Real step sources (a watch
+  app, Fit) are granted through that path, so the app keeps `aggregate` as SPEC §5.3 says.
+- The 7-day read uses whole local days, `[today − 6, tomorrow)`: with the range ending at `now`,
+  `aggregateGroupByPeriod` dropped today's partial slice (seen on device: today's bar was empty
+  while the ring showed the count).
+- Other instrumented tests set `asked_health` (or grant read) up front, so Health Connect's
+  request doesn't cover the dashboard, as D24 did for calendar.
+- The Accept's grep for `SHOW_PERMISSIONS_RATIONALE\|VIEW_PERMISSION_USAGE` prints `3`, not `2`:
+  the alias's guard, `android:permission="android.permission.START_VIEW_PERMISSION_USAGE"`, also
+  matches. Health Connect's documented alias carries that guard (only the system may start it),
+  so it stays. Both rationale entries are present.
+- **For T8:** Health Connect only allows reads in the foreground unless the app holds
+  `READ_HEALTH_DATA_IN_BACKGROUND`. The widget Worker's steps line will read nothing in the
+  background. T8 decides (a dash, the last foreground value, or the background permission through
+  a D-entry).
+
+**SPEC patches.** §2, §4.4, §5.1, §5.3, §6.1 (*amended 2026-10-23*, T7).
+
 ### 2026-10-22 — D24: calendar permission details and test seam (T6)
 
 **Owner ask.** T6 seam round (`/tdd`). Revoking a runtime permission kills the process under

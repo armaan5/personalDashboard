@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug builds only (D25): instrumented tests run in the app's process, so inserting a StepsRecord
+  through HealthConnectClient needs the app's own write grant. Release stays read-only (D1, D16).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.health.WRITE_STEPS" />
+</manifest>

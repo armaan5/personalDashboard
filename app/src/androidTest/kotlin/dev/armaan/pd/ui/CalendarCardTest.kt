@@ -56,7 +56,11 @@ class CalendarCardTest {
 
     private fun launch(calendarGranted: (() -> Boolean)? = null, askedBefore: Boolean = false) {
         app.container = AppContainer(app, clock = Clock.fixed(now, utc), zoneOf = { utc }, inMemory = true, calendarGranted = calendarGranted)
-        if (askedBefore) runBlocking { app.container.settings.setAskedCalendar() }
+        runBlocking {
+            if (askedBefore) app.container.settings.setAskedCalendar()
+            // Steps already asked, so Health Connect's request doesn't cover the dashboard.
+            app.container.settings.setAskedHealth()
+        }
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 

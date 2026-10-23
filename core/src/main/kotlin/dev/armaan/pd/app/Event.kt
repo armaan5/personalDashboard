@@ -48,4 +48,25 @@ sealed interface Event {
     data object GrantCalendar : Event
 
     data class ToggleCalendar(val calendarId: String, val on: Boolean) : Event
+
+    data class HealthChecked(val check: HealthCheck) : Event
+
+    /** The Health Connect request came back; [granted] is whether `READ_STEPS` was among the grants. */
+    data class HealthAnswered(val granted: Boolean) : Event
+
+    /**
+     * [day]'s total so far, and daily totals by local date for the 7 days ending on [day] (days with
+     * records only). [day] is the date the read was made for, so a read straddling midnight stays
+     * consistent.
+     */
+    data class StepsLoaded(val day: LocalDate, val total: Long, val days: Map<LocalDate, Long>) : Event
+
+    /** The Steps card was composed on screen (SPEC §5.1: the first view requests). */
+    data object StepsShown : Event
+
+    /** The Steps card's action: install, request, or open Health Connect's settings. */
+    data object GrantSteps : Event
+
+    /** Settings → Step goal stepper; the reducer clamps it. */
+    data class SetStepGoal(val goal: Int) : Event
 }

@@ -8,6 +8,7 @@ import dev.armaan.pd.data.HabitRepository
 import dev.armaan.pd.data.SettingsStore
 import dev.armaan.pd.data.TodoRepository
 import dev.armaan.pd.source.CalendarReader
+import dev.armaan.pd.source.StepsReader
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.time.Clock
@@ -37,6 +38,7 @@ class AppContainer(
     val todos = TodoRepository(db.todoDao())
     val settings = if (inMemory) SettingsStore.isolated(context, io) else SettingsStore.build(context, io)
     val calendar = CalendarReader(context.contentResolver, io)
+    val steps = StepsReader(context, io)
 
     /** SPEC §5.1: whether `READ_CALENDAR` is granted right now. */
     val calendarGranted: () -> Boolean = calendarGranted

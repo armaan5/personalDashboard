@@ -4,6 +4,9 @@ import dev.armaan.pd.calendar.shownCalendars
 import dev.armaan.pd.habit.Habit
 import dev.armaan.pd.habit.cleanHabitName
 import dev.armaan.pd.habit.isScheduledOn
+import dev.armaan.pd.steps.StepsCard
+import dev.armaan.pd.steps.clampGoal
+import dev.armaan.pd.steps.lastSevenDays
 import dev.armaan.pd.time.today
 import dev.armaan.pd.todo.Todo
 import dev.armaan.pd.todo.buckets
@@ -50,6 +53,23 @@ fun reduce(state: State, event: Event, now: Instant, zone: ZoneId): Next {
             if (state.calendarAccess == Access.NotAsked) requestCalendar(state) else Next(state)
         Event.GrantCalendar -> grantCalendar(state)
         is Event.ToggleCalendar -> toggleCalendar(state, event)
+
+        is Event.HealthChecked -> Next(
+            state.copy(
+                healthCheck = event.check,
+                healthRequesting = false,
+                healthLockedOut = state.healthLockedOut && !event.check.granted,
+            ),
+        )
+        is Event.HealthAnswered -> Next(
+            state.copy(healthLockedOut = state.healthLockedOut || (!event.granted && state.healthRepeatAsk)),
+        )
+        is Event.StepsLoaded -> Next(state.copy(stepsToday = event.total, stepsWeek = lastSevenDays(event.days, event.day)))
+        Event.StepsShown ->
+            if (!state.healthRequesting && state.steps == StepsCard.Blocked(Access.NotAsked)) requestHealth(state)
+            else Next(state)
+        Event.GrantSteps -> grantSteps(state)
+        is Event.SetStepGoal -> Next(state, listOf(Effect.WriteStepGoal(clampGoal(event.goal))))
     }
 }
 
@@ -141,6 +161,23 @@ private fun grantCalendar(state: State): Next = when (state.calendarAccess) {
 
 private fun requestCalendar(state: State) =
     Next(state.copy(calendarRequesting = true), listOf(Effect.RequestPermission(PermissionKind.Calendar)))
+
+/** SPEC §5.3: install when missing, ask while Health Connect will still ask, then its settings. */
+private fun grantSteps(state: State): Next = when (val card = state.steps) {
+    StepsCard.NeedsInstall -> Next(state, listOf(Effect.OpenHealthConnectInstall))
+    is StepsCard.Blocked -> when {
+        card.access == Access.PermanentlyDenied -> Next(state, listOf(Effect.OpenHealthConnectSettings))
+        // One request at a time, so the repeat flag belongs to the request it answers.
+        state.healthRequesting -> Next(state)
+        else -> requestHealth(state)
+    }
+    else -> Next(state)
+}
+
+private fun requestHealth(state: State) = Next(
+    state.copy(healthRequesting = true, healthRepeatAsk = state.settings?.askedHealth == true),
+    listOf(Effect.RequestPermission(PermissionKind.Health)),
+)
 
 /** SPEC §5.2: the first toggle writes `calendar_ids` explicitly, starting from the default. */
 private fun toggleCalendar(state: State, event: Event.ToggleCalendar): Next {

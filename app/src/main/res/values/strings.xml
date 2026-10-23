@@ -39,11 +39,41 @@
     <string name="calendar_event_now_cd">Now, %1$s to %2$s, %3$s</string>
     <string name="calendar_all_day_cd">All day, %1$s</string>
 
+    <!-- Steps card (SPEC §5.3) -->
+    <string name="steps_card_cd">Steps, %1$s of %2$s today</string>
+    <string name="steps_card_off_cd">Steps, access is off</string>
+    <string name="steps_card_unavailable_cd">Steps, not available on this phone</string>
+    <string name="steps_card_install_cd">Steps, Health Connect is needed</string>
+    <string name="steps_card_no_data_cd">Steps, none in the last 7 days</string>
+    <string name="steps_goal_meta">Goal %1$s</string>
+    <string name="steps_of_goal">of %1$s today</string>
+    <string name="steps_to_go">%1$s to go</string>
+    <string name="steps_goal_met">Goal met</string>
+    <string name="steps_unavailable">Step counts aren\'t available on this phone.</string>
+    <string name="steps_needs_install">Steps come from Health Connect, which needs installing or updating.</string>
+    <string name="get_health_connect">Get Health Connect</string>
+    <string name="steps_off">Health Connect access is off, so your steps can\'t show here.</string>
+    <string name="steps_off_settings">Health Connect access is off, so turn it on in Health Connect\'s settings.</string>
+    <string name="steps_no_data">No steps in the last 7 days. They show here once an app like Google Fit or Samsung Health saves them to Health Connect.</string>
+
     <!-- Settings (SPEC §6.1) -->
     <string name="settings_calendars">Calendars</string>
     <string name="settings_calendars_hint">Choose which calendars show on the dashboard</string>
     <string name="calendars_title">Calendars</string>
     <string name="calendars_off">Calendar access is off, so there are no calendars to choose from.</string>
+    <string name="settings_step_goal">Step goal</string>
+    <string name="settings_step_goal_hint">Steps a day, from 1,000 to 50,000</string>
+    <string name="step_goal_less">Lower step goal</string>
+    <string name="step_goal_more">Raise step goal</string>
+    <string name="step_goal_cd">Step goal, %1$s</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_hint">Version and privacy</string>
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_privacy_head">Nothing leaves this phone</string>
+    <string name="about_privacy_network">This app has no internet access. Your habits, to-dos and settings are stored on this phone only, and are not backed up.</string>
+    <string name="about_privacy_reads">It reads your calendar and your step count from Health Connect to show them on the dashboard. It never changes them and never sends them anywhere.</string>
+    <string name="about_privacy_revoke">You can turn off its access to either at any time, in the system settings or in Health Connect.</string>
     <string name="calendars_none">No calendars on this phone. Add an account in the system settings and its calendars show here.</string>
 
     <!-- Habits card and screen (SPEC §4.2) -->

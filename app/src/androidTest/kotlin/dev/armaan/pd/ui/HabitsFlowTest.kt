@@ -7,6 +7,7 @@ import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -47,7 +48,11 @@ class HabitsFlowTest {
                 // device's own calendars.
                 calendarGranted = { false },
             )
-            runBlocking { app.container.settings.setAskedCalendar() }
+            runBlocking {
+                app.container.settings.setAskedCalendar()
+                // Steps already asked too, so Health Connect's request doesn't cover the dashboard.
+                app.container.settings.setAskedHealth()
+            }
         }
     }
 
@@ -122,8 +127,13 @@ class HabitsFlowTest {
     @Test
     fun everyCardAndControl_hasAContentDescription() {
         seedStretch()
-        listOf("Calendar, access is off", "Habits, 0 of 1 done", "To-dos, nothing to do", "Steps").forEach {
+        listOf("Calendar, access is off", "Habits, 0 of 1 done", "To-dos, nothing to do").forEach {
             rule.onNodeWithContentDescription(it).assertExists()
+        }
+        // Its summary depends on Health Connect grants left by other classes in the run (LaunchTest
+        // grants read), and lands after an async check: any "Steps, …" summary will do.
+        rule.waitUntil(5_000) {
+            rule.onAllNodesWithContentDescription("Steps, ", substring = true).fetchSemanticsNodes().isNotEmpty()
         }
         assertControlsLabelled()
 

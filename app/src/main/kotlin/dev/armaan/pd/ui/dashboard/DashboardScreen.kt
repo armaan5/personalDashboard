@@ -32,9 +32,8 @@ import dev.armaan.pd.R
 import dev.armaan.pd.app.Access
 import dev.armaan.pd.calendar.Agenda
 import dev.armaan.pd.habit.HabitsToday
+import dev.armaan.pd.steps.StepsCard
 import dev.armaan.pd.todo.Buckets
-import dev.armaan.pd.ui.Section
-import dev.armaan.pd.ui.SectionHead
 import dev.armaan.pd.ui.UiLocale
 import dev.armaan.pd.ui.theme.Pd
 import dev.armaan.pd.ui.theme.PdIcons
@@ -44,10 +43,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.IsoFields
 
-/**
- * SPEC §6.1: four sections in the D18 order on one ruled sheet (D23). Steps is a titled
- * placeholder until T7 fills it.
- */
+/** SPEC §6.1: four sections in the D18 order on one ruled sheet (D23). */
 @Composable
 fun DashboardScreen(
     today: LocalDate,
@@ -68,6 +64,10 @@ fun DashboardScreen(
     onOpenTodos: () -> Unit,
     onAddTodo: () -> Unit,
     onTickTodo: (todoId: Long) -> Unit,
+    steps: StepsCard?,
+    stepGoal: Int,
+    onStepsShown: () -> Unit,
+    onGrantSteps: () -> Unit,
 ) {
     val insets = WindowInsets.safeDrawing.asPaddingValues()
     val dir = LocalLayoutDirection.current
@@ -85,7 +85,7 @@ fun DashboardScreen(
         item { CalendarCard(calendarAccess, agenda, now, zone, onCalendarShown, onGrantCalendar, onOpenSettings) }
         item { HabitsCard(habits, anyHabits, today, onOpenHabits, onAddHabit, onTick) }
         item { TodosCard(todos, anyTodos, onOpenTodos, onAddTodo, onTickTodo) }
-        item { Placeholder(stringResource(R.string.section_steps), Pd.colors.steps) }
+        item { StepsCard(steps, stepGoal, onStepsShown, onGrantSteps, onOpenSettings) }
     }
 }
 
@@ -121,9 +121,4 @@ private fun Masthead(today: LocalDate, onOpenSettings: () -> Unit) {
             Icon(PdIcons.Settings, contentDescription = stringResource(R.string.settings), tint = Pd.colors.ink)
         }
     }
-}
-
-@Composable
-private fun Placeholder(title: String, dot: androidx.compose.ui.graphics.Color) {
-    Section { SectionHead(title, title, dot) }
 }

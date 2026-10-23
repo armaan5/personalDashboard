@@ -39,6 +39,10 @@ sealed interface UiEffect {
 
     data object OpenAppSettings : UiEffect
 
+    data object OpenHealthConnectInstall : UiEffect
+
+    data object OpenHealthConnectSettings : UiEffect
+
     data object Finish : UiEffect
 }
 
@@ -63,6 +67,9 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
     private val ui = Channel<UiEffect>(Channel.BUFFERED)
     val uiEffects: Flow<UiEffect> = ui.receiveAsFlow()
 
+    /** Bumped on foreground and each minute: steps have no change feed worth watching (SPEC §5.3). */
+    private val stepsTick = MutableStateFlow(0L)
+
     private var ticker: Job? = null
 
     init {
@@ -70,6 +77,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             merge(container.habits.loaded, container.todos.loaded, container.settings.loaded).collect(::dispatch)
         }
         viewModelScope.launch { readCalendar() }
+        viewModelScope.launch { readSteps() }
     }
 
     fun zone(): ZoneId = container.zone()
@@ -91,14 +99,27 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         dispatch(Event.CalendarChecked(PermissionCheck(container.calendarGranted(), rationale)))
     }
 
+    /** SPEC §5.1, §5.3: the SDK status and the grant are re-read on foreground and after a request. */
+    fun checkHealth() {
+        viewModelScope.launch { dispatch(Event.HealthChecked(container.steps.check())) }
+    }
+
+    fun healthAnswered(granted: Boolean) {
+        dispatch(Event.HealthAnswered(granted))
+        checkHealth()
+    }
+
     fun resume(calendarRationale: Boolean) {
         refreshDay()
         checkCalendar(calendarRationale)
+        checkHealth()
+        stepsTick.value++
         ticker?.cancel()
         ticker = viewModelScope.launch {
             while (isActive) {
                 delay(MINUTE - container.clock.millis() % MINUTE)
                 refreshDay()
+                stepsTick.value++
             }
         }
     }
@@ -133,6 +154,26 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             }
     }
 
+    /** Re-reads today and the last 7 days when access is granted, on foreground and each minute. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun readSteps() {
+        val granted = state.map { it.healthCheck?.granted == true }.distinctUntilChanged()
+        combine(granted, stepsTick) { g, _ -> g }
+            .collectLatest { isGranted ->
+                if (!isGranted) return@collectLatest
+                val now = container.clock.instant()
+                val zone = container.zone()
+                val today = today(now, zone)
+                val total = container.steps.total(today.atStartOfDay(zone).toInstant(), now) ?: return@collectLatest
+                // Whole days: Health Connect drops a slice the range cuts short, which was today's.
+                // It reads these local times in the system zone, which is what zone() returns
+                // outside tests.
+                val days = container.steps.daily(today.minusDays(6).atStartOfDay(), today.plusDays(1).atStartOfDay())
+                    ?: return@collectLatest
+                dispatch(Event.StepsLoaded(today, total, days))
+            }
+    }
+
     private suspend fun perform(effect: Effect) {
         when (effect) {
             is Effect.WriteHabit -> container.habits.write(effect.habit)
@@ -144,11 +185,15 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             is Effect.RequestPermission -> {
                 when (effect.kind) {
                     PermissionKind.Calendar -> container.settings.setAskedCalendar()
+                    PermissionKind.Health -> container.settings.setAskedHealth()
                 }
                 ui.send(UiEffect.RequestPermission(effect.kind))
             }
             Effect.OpenAppSettings -> ui.send(UiEffect.OpenAppSettings)
             is Effect.WriteCalendarIds -> container.settings.setCalendarIds(effect.ids)
+            Effect.OpenHealthConnectInstall -> ui.send(UiEffect.OpenHealthConnectInstall)
+            Effect.OpenHealthConnectSettings -> ui.send(UiEffect.OpenHealthConnectSettings)
+            is Effect.WriteStepGoal -> container.settings.setStepGoal(effect.goal)
             is Effect.ShowSnackbar -> ui.send(UiEffect.Snackbar(effect.message, effect.undo))
             Effect.Finish -> ui.send(UiEffect.Finish)
         }

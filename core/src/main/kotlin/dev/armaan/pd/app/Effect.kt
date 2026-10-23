@@ -32,12 +32,20 @@ sealed interface Effect {
     /** Writes `calendar_ids` explicitly (SPEC §3.2). */
     data class WriteCalendarIds(val ids: Set<String>) : Effect
 
+    /** Health Connect's Play listing, or the browser when Play is absent (SPEC §5.3). */
+    data object OpenHealthConnectInstall : Effect
+
+    /** Health Connect's permission settings for this app (SPEC §5.3, PermanentlyDenied). */
+    data object OpenHealthConnectSettings : Effect
+
+    data class WriteStepGoal(val goal: Int) : Effect
+
     data class ShowSnackbar(val message: Message, val undo: Boolean) : Effect
 
     data object Finish : Effect
 }
 
-enum class PermissionKind { Calendar }
+enum class PermissionKind { Calendar, Health }
 
 /** Snackbar copy keys. The text lives in `strings.xml`. */
 sealed interface Message {

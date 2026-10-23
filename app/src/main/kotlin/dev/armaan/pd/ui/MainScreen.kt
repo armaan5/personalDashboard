@@ -1,6 +1,10 @@
 package dev.armaan.pd.ui
 
 import android.Manifest
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.health.connect.HealthConnectManager
+import android.os.Build
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -27,6 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
+import androidx.core.net.toUri
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.armaan.pd.MainViewModel
@@ -39,9 +46,12 @@ import dev.armaan.pd.app.Screen
 import dev.armaan.pd.calendar.agenda
 import dev.armaan.pd.calendar.shownCalendars
 import dev.armaan.pd.habit.habitsToday
+import dev.armaan.pd.source.StepsReader
+import dev.armaan.pd.steps.GoalDefault
 import dev.armaan.pd.todo.buckets
 import dev.armaan.pd.ui.dashboard.DashboardScreen
 import dev.armaan.pd.ui.habits.HabitsScreen
+import dev.armaan.pd.ui.settings.AboutScreen
 import dev.armaan.pd.ui.settings.CalendarsScreen
 import dev.armaan.pd.ui.settings.SettingsScreen
 import dev.armaan.pd.ui.todos.TodosScreen
@@ -59,6 +69,7 @@ fun MainScreen(vm: MainViewModel) {
         habitsToday(state.habits, state.completions, today)
     }
     val todos = remember(state.todos, today) { buckets(state.todos, today) }
+    val stepGoal = state.settings?.stepGoal ?: GoalDefault
     val snackbar = remember { SnackbarHostState() }
     val activity = LocalActivity.current
     val resources = LocalResources.current
@@ -70,6 +81,10 @@ fun MainScreen(vm: MainViewModel) {
     val calendarRationale = { activity?.shouldShowRequestPermissionRationale(Manifest.permission.READ_CALENDAR) ?: false }
     val requestCalendar = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         vm.checkCalendar(calendarRationale())
+    }
+    // Health Connect's own contract replaces the runtime dialog (SPEC §5.3).
+    val requestHealth = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) {
+        vm.healthAnswered(StepsReader.ReadSteps in it)
     }
 
     LifecycleResumeEffect(Unit) {
@@ -86,12 +101,16 @@ fun MainScreen(vm: MainViewModel) {
                 UiEffect.Finish -> activity?.finish()
                 is UiEffect.RequestPermission -> when (effect.kind) {
                     PermissionKind.Calendar -> requestCalendar.launch(Manifest.permission.READ_CALENDAR)
+                    PermissionKind.Health -> try {
+                        requestHealth.launch(setOf(StepsReader.ReadSteps))
+                    } catch (_: ActivityNotFoundException) {
+                        // Health Connect went away since the last check: re-check, which ends the request.
+                        vm.checkHealth()
+                    }
                 }
-                UiEffect.OpenAppSettings -> activity?.let {
-                    it.startActivity(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", it.packageName, null)),
-                    )
-                }
+                UiEffect.OpenHealthConnectInstall -> activity?.let(::openHealthConnectInstall)
+                UiEffect.OpenHealthConnectSettings -> activity?.let(::openHealthConnectSettings)
+                UiEffect.OpenAppSettings -> activity?.let(::openAppSettings)
                 is UiEffect.Snackbar -> {
                     val id = ++shown
                     snackbar.currentSnackbarData?.dismiss()
@@ -137,7 +156,11 @@ fun MainScreen(vm: MainViewModel) {
         Screen.Settings -> SettingsScreen(
             onBack = { vm.dispatch(Event.Back) },
             onOpenCalendars = { vm.dispatch(Event.Open(Screen.Calendars)) },
+            stepGoal = stepGoal,
+            onStepGoal = { vm.dispatch(Event.SetStepGoal(it)) },
+            onOpenAbout = { vm.dispatch(Event.Open(Screen.About)) },
         )
+        Screen.About -> AboutScreen(onBack = { vm.dispatch(Event.Back) })
         Screen.Calendars -> CalendarsScreen(
             access = state.calendarAccess,
             calendars = state.calendars,
@@ -172,6 +195,10 @@ fun MainScreen(vm: MainViewModel) {
                     vm.dispatch(Event.Open(Screen.Todos))
                 },
                 onTickTodo = { vm.dispatch(Event.ToggleTodo(it)) },
+                steps = state.steps,
+                stepGoal = stepGoal,
+                onStepsShown = { vm.dispatch(Event.StepsShown) },
+                onGrantSteps = { vm.dispatch(Event.GrantSteps) },
             )
             SnackbarHost(
                 snackbar,
@@ -180,6 +207,45 @@ fun MainScreen(vm: MainViewModel) {
         }
     }
 }
+
+private fun openAppSettings(activity: Activity) {
+    activity.startActivity(
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", activity.packageName, null)),
+    )
+}
+
+/** Health Connect's Play listing; the browser when Play is absent (SPEC §5.3). User-initiated, not app network use (D3). */
+private fun openHealthConnectInstall(activity: Activity) {
+    val play = Intent(Intent.ACTION_VIEW, "market://details?id=$HealthConnectPackage&url=healthconnect%3A%2F%2Fonboarding".toUri())
+        .setPackage("com.android.vending")
+    val web = Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$HealthConnectPackage".toUri())
+    startFirst(activity, play, web)
+}
+
+/** Health Connect's permissions for this app on 34+, its own settings on 28–33, else the app's settings. */
+private fun openHealthConnectSettings(activity: Activity) {
+    val manage = if (Build.VERSION.SDK_INT >= 34) {
+        Intent(HealthConnectManager.ACTION_MANAGE_HEALTH_PERMISSIONS).putExtra(Intent.EXTRA_PACKAGE_NAME, activity.packageName)
+    } else {
+        null
+    }
+    val settings = Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
+    if (!startFirst(activity, *listOfNotNull(manage, settings).toTypedArray())) openAppSettings(activity)
+}
+
+/** Starts the first intent something can handle; false when none can. */
+private fun startFirst(activity: Activity, vararg intents: Intent): Boolean = intents.any {
+    try {
+        activity.startActivity(it)
+        true
+    } catch (_: ActivityNotFoundException) {
+        false
+    } catch (_: SecurityException) {
+        false
+    }
+}
+
+private const val HealthConnectPackage = "com.google.android.apps.healthdata"
 
 private fun text(resources: android.content.res.Resources, message: Message): String = when (message) {
     is Message.HabitDeleted -> resources.getString(R.string.snack_habit_deleted, message.name)

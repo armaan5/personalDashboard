@@ -29,6 +29,8 @@ home-screen widget summarises them (D19). All data comes from the phone itself (
     exclude every domain. On API 31+ `allowBackup="false"` alone doesn't stop device-to-device
     transfer (*clarified 2026-10-22*, T0).
   - A `<queries>` entry for the Health Connect package (needed on 28–33).
+  - *Amended 2026-10-23 (T7, D25):* debug builds alone also declare
+    `android.permission.health.WRITE_STEPS`, for the instrumented test's insert. Release doesn't.
 - **Time:** one `Clock` is created in `AppContainer`. Everything else receives it or an `Instant` /
   `ZoneId`. `ZoneId.systemDefault()` is read at the same wiring place, and re-read on
   `ACTION_TIMEZONE_CHANGED` and on foreground (D13).
@@ -139,6 +141,13 @@ rationale)`, `CalendarLoaded(instances)` and `CalendarsListed(calendars)` as sna
 plumbing set `asked_calendar`, then show the system dialog. `WriteCalendarIds` writes
 `calendar_ids`.
 
+*Amended 2026-10-23 (T7, D25):* plumbing delivers `HealthChecked(sdk, granted)`,
+`HealthAnswered(granted)` (the request's result) and `StepsLoaded(today, days)` (today's total, and
+daily totals by local date for days with records); the UI sends `StepsShown`, `GrantSteps` and
+`SetStepGoal(goal)`. Effects added: `OpenHealthConnectSettings` and `WriteStepGoal(goal)` (the
+reducer clamps it, §5.3). `RequestPermission(Health)` makes plumbing set `asked_health`, then launch
+Health Connect's request contract.
+
 ## 5. Sources
 
 ### 5.1 Permissions (D7)
@@ -159,6 +168,10 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   reads `Denied`, not `PermanentlyDenied`, until the next check. `NotAsked` and `Denied` show the
   reason line; `PermanentlyDenied` says to turn it on in the app's settings. The button reads
   **Grant access** in every blocked state (T3 comps).
+- *Amended 2026-10-23 (T7, D25):* Health Connect has no rationale check. Its `PermanentlyDenied`
+  is reached when a request comes back refused while `asked_health` was already set when it
+  fired; it holds for the process and clears on a grant. Until then, `asked_health` and not
+  granted reads `Denied`.
 
 ### 5.2 Calendar (D17)
 
@@ -219,6 +232,30 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   `androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE`; on 34+ via an `activity-alias` for
   `android.intent.action.VIEW_PERMISSION_USAGE` with category
   `android.intent.category.HEALTH_PERMISSIONS`.
+- *Amended 2026-10-23 (T7, D25):*
+  - Reads happen while access is granted: on foreground, each minute while in the foreground,
+    and when access is granted. The 7-day read covers whole local days, `[today − 6, tomorrow)`.
+    A failed read keeps what was last shown. `aggregate` counts only apps on Health Connect's
+    data-priority list.
+  - The state is unknown, and nothing shows below the head, until the SDK status, the grant and
+    (once granted) both counts have been read.
+  - `PermanentlyDenied` → **Grant access** opens Health Connect's page for this app
+    (`ACTION_MANAGE_HEALTH_PERMISSIONS` on 34+, Health Connect's settings on 28–33, the app's
+    system settings as a last resort). `NeedsInstall`'s action reads **Get Health Connect**.
+  - Layout (D23): the head opens Settings, and shows "Goal 8,000" beside a count (not in the
+    other states). A 112 dp flat ring beside the
+    count, "of 8,000 today", then "1,760 to go", or "Goal met" at or above the goal. The count
+    shrinks to fit rather than wrap at large font scales. The bars share one scale, the larger of
+    the best day and the goal, with a dashed goal line labelled with the goal. Bars at or above
+    the goal are tomato; the rest are ink tint capped with an ink2 hairline (WCAG 1.4.11); today's
+    is outlined in ink, as a stub on the baseline at 0, with its letter in ink. The goal label is
+    knocked out of any bar it crosses. At font scales of 1.5 and up, the Step goal stepper sits on
+    its own line under its label.
+  - TalkBack: the card reads "Steps, 6,240 of 8,000 today", "Steps, access is off", "Steps, not
+    available on this phone", "Steps, Health Connect is needed" or "Steps, none in the last 7
+    days". The ring and bars are decorative.
+  - Settings → Step goal: − and + buttons either side of the value, disabled at the ends; the
+    value is announced as "Step goal, 8,000", politely, when it changes.
 
 ## 6. UI
 
@@ -233,7 +270,10 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   - **Settings:** Calendars, Step goal, About. Opened from the masthead's settings icon and from
     the Calendar (and Steps) card head. **Calendars** is pushed over it as its own back-stack
     screen (*amended 2026-10-22*, T6, D24). Without calendar access it shows the reason and
-    **Grant access**; with no calendars on the device it says so.
+    **Grant access**; with no calendars on the device it says so. **About** is pushed the same
+    way (*amended 2026-10-23*, T7): the app name, the version, and the privacy statement "Nothing
+    leaves this phone" (PRD A9). Health Connect opens the same screen on its own as the rationale
+    activity; Back closes it.
 - The look comes from the T3 direction and the Compose theme tokens it produces. `DESIGN.md`
   describes the shipped theme afterwards.
 - PRD A1 bar: light/dark following the system, WCAG 2.2 AA contrast, 48 dp targets, TalkBack
