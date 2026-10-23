@@ -168,9 +168,8 @@ local state and gitignored.
 ## Still open
 
 - `FEEDBACK.md` F2, waiting for `/feedback`.
-- Not seen on device in T9 (covered by tests): step 5's ring and goal change (Samsung Health had
-  written no steps to Health Connect yet, so the card sat in `NoData`), the Sat → Mon habit
-  streak, and the midnight to-do rollover.
+- Not seen on device in T9 (covered by tests): the Sat → Mon habit streak and the midnight to-do
+  rollover. (Step 5 seen 2026-10-23 once Samsung Health wrote to Health Connect: "472 of 7,000".)
 - Known gaps in `DESIGN.md` not yet raised as F-items: at 200 % font a Calendar row's time wraps
   ("09:" / "00") and a 2×2 widget ellipsises every line; the widget picker shows Glance's loading
   layout (no `previewImage` / `previewLayout`); `surfaceTint` is left at Material's default
