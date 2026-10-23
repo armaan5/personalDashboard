@@ -59,6 +59,7 @@ ticket. Destructive migration is never enabled.
 | `step_goal` | `Int` | 8000 | Range 1,000–50,000, step 500 (§5.3) |
 | `asked_calendar` | `Boolean` | false | The calendar permission has been requested at least once (§5.1) |
 | `asked_health` | `Boolean` | false | Health Connect permission requested at least once (§5.1) |
+| `theme` | `String` | absent | `System`, `Light` or `Dark`; absent (or unknown) = `System`, which follows the system's dark mode (*amended 2026-10-23*, U2, D27) |
 
 ## 4. Rules (pure, `:core`)
 
@@ -154,6 +155,11 @@ Health Connect's request contract.
 `WriteHabit`, `DeleteHabit`, `RestoreHabit`, `ToggleCompletion`, `WriteTodo`, `DeleteTodos`,
 `WriteStepGoal` and `WriteCalendarIds`. The reducer appends it once, after the event's other
 effects.
+
+*Amended 2026-10-23 (U2, D27):* the UI sends `SetTheme(choice)` from Settings → Theme; the
+reducer returns `WriteTheme(choice)`, which writes `theme`, and `RefreshWidget` follows it like the
+writes above. Whether the app draws dark is the pure `isDark(choice, systemDark)`: the system's
+mode for `System`, otherwise the choice.
 
 ## 5. Sources
 
@@ -277,16 +283,19 @@ Per source, the state is one of: `Granted` · `NotAsked` · `Denied` (can ask ag
   - **Habits:** today's scheduled habits with tick and streak, then "Not today". Add/edit sheet
     with name and weekday chips. Delete from the edit sheet.
   - **To-dos:** §4.3, an add/edit sheet with title and an optional date (Material date picker).
-  - **Settings:** Calendars, Step goal, About. Opened from the masthead's settings icon and from
+  - **Settings:** Calendars, Step goal, Theme, About. Opened from the masthead's settings icon and from
     the Calendar (and Steps) card head. **Calendars** is pushed over it as its own back-stack
     screen (*amended 2026-10-22*, T6, D24). Without calendar access it shows the reason and
     **Grant access**; with no calendars on the device it says so. **About** is pushed the same
     way (*amended 2026-10-23*, T7): the app name, the version, and the privacy statement "Nothing
     leaves this phone" (PRD A9). Health Connect opens the same screen on its own as the rationale
-    activity; Back closes it.
+    activity; Back closes it. **Theme** sits between Step goal and About (*amended 2026-10-23*,
+    U2, D27): three chips, System · Light · Dark, in the weekday-chip style, one always chosen.
+    A pick applies at once to every app screen, the privacy screen and the status- and
+    navigation-bar icons, and is kept in `theme` (§3.2).
 - The look comes from the T3 direction and the Compose theme tokens it produces. `DESIGN.md`
   describes the shipped theme afterwards.
-- PRD A1 bar: light/dark following the system, WCAG 2.2 AA contrast, 48 dp targets, TalkBack
+- PRD A1 bar: light/dark following the Theme setting (default System; *amended 2026-10-23*, U2, D27), WCAG 2.2 AA contrast, 48 dp targets, TalkBack
   labels (every card announces its summary, e.g. "Habits, 2 of 3 done"), works at 360 dp and
   200 % font.
 

@@ -40,6 +40,9 @@ sealed interface Effect {
 
     data class WriteStepGoal(val goal: Int) : Effect
 
+    /** Writes `theme` (SPEC §3.2). The widget follows it (D27 d), so it refreshes after. */
+    data class WriteTheme(val choice: ThemeChoice) : Effect
+
     /** Redraws the widget from the sources (SPEC §6.2). Follows every write that changes what it shows. */
     data object RefreshWidget : Effect
 

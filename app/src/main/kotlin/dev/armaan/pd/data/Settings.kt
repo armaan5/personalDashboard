@@ -7,10 +7,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.armaan.pd.app.Event
 import dev.armaan.pd.app.Settings
+import dev.armaan.pd.app.ThemeChoice
 import dev.armaan.pd.steps.GoalDefault
 import java.io.File
 import java.util.UUID
@@ -30,6 +32,8 @@ class SettingsStore(private val store: DataStore<Preferences>) {
                 askedCalendar = prefs[AskedCalendar] ?: false,
                 stepGoal = prefs[StepGoal] ?: GoalDefault,
                 askedHealth = prefs[AskedHealth] ?: false,
+                // Absent, or a name this build doesn't know, reads as System (SPEC §3.2).
+                theme = ThemeChoice.entries.find { it.name == prefs[Theme] } ?: ThemeChoice.System,
             )
         }
         .distinctUntilChanged()
@@ -52,11 +56,16 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         store.edit { it[StepGoal] = goal }
     }
 
+    suspend fun setTheme(choice: ThemeChoice) {
+        store.edit { it[Theme] = choice.name }
+    }
+
     companion object {
         private val CalendarIds = stringSetPreferencesKey("calendar_ids")
         private val AskedCalendar = booleanPreferencesKey("asked_calendar")
         private val StepGoal = intPreferencesKey("step_goal")
         private val AskedHealth = booleanPreferencesKey("asked_health")
+        private val Theme = stringPreferencesKey("theme")
 
         fun build(context: Context, io: CoroutineDispatcher) =
             create(io) { context.preferencesDataStoreFile("settings") }
