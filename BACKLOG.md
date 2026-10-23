@@ -1,6 +1,6 @@
 # BACKLOG — personalDashboard
 
-**Status:** Wave 1 (v1, D1–D25) in progress. T0–T6 done 2026-10-22, T7 done 2026-10-23. Frontier: **T8**, and **O1** (code merged 2c16afe; waits on the owner's keystore).
+**Status:** Wave 1 (v1, D1–D26) in progress. T0–T6 done 2026-10-22, T7–T8 done 2026-10-23. Frontier: **O1** (code merged 2c16afe; waits on the owner's keystore), then **T9**.
 
 **Build order:** T0 → T1 → T2 → (T3 owner gate) → T4 → T5 → T6 → T7 → T8 → T9. T3 runs beside
 T0–T2. O1 runs any time after T0.
@@ -246,7 +246,7 @@ Accept:
 Non-goals: no other Health Connect record types (D1), no writing to Health Connect, no history
 beyond 7 days, no chart library (A3).
 
-### T8 — Glance widget and refresh — **high-care** — *added 2026-10-22*
+### T8 — Glance widget and refresh — **high-care** — *added 2026-10-22* — **DONE 2026-10-23** (c689283)
 Files: `core/…/widget/Summary.kt`, `core/test/…/widget/SummaryTest.kt`,
 `app/…/widget/DashboardWidget.kt`, `app/…/widget/DashboardWidgetReceiver.kt`,
 `app/…/widget/RefreshWorker.kt`, `app/src/main/res/xml/dashboard_widget_info.xml`,
